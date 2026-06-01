@@ -32,8 +32,8 @@
 
         <div class="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl items-center px-6 py-10 lg:px-10">
             <div
-                class="grid w-full gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center xl:grid-cols-[minmax(0,1fr)_380px]">
-                <section class="max-w-xl animate-fade-up [--animation-delay:0.1s]">
+                class="grid w-full gap-10 justify-items-center lg:justify-items-stretch lg:grid-cols-[minmax(0,1fr)_360px] lg:items-center xl:grid-cols-[minmax(0,1fr)_380px]">
+                <section class="max-w-xl mx-auto lg:mx-0 text-center lg:text-left animate-fade-up [--animation-delay:0.1s]">
                     <div
                         class="mb-5 inline-flex items-center gap-3 rounded-full border border-white/70 bg-white/55 px-4 py-2 text-sm font-semibold text-slate-700 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-md">
                         <span class="h-2.5 w-2.5 rounded-full bg-orange-500"></span>
@@ -51,9 +51,9 @@
                 </section>
 
                 <section
-                    class="w-full max-w-sm animate-fade-in rounded-[28px] border border-white/75 bg-white/28 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.14)] backdrop-blur-xl [--animation-delay:0.25s] sm:p-6"
+                    class="w-full max-w-sm mx-auto lg:mx-0 animate-fade-in rounded-[28px] border border-white/75 bg-white/28 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.14)] backdrop-blur-xl [--animation-delay:0.25s] sm:p-6"
                     aria-label="Form login">
-                    <div class="mb-5">
+                    <div class="mb-5 text-center lg:text-left">
                         <h2 class="text-xl font-bold text-[#091057]">Masuk ke POLTREE</h2>
                         <p class="mt-1 text-sm leading-6 text-slate-600">Gunakan akun Anda untuk mengakses layanan
                             kampus.</p>
