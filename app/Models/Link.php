@@ -15,7 +15,7 @@ class Link extends Model
 
     protected $fillable = [
         'id_link', 'id_kategori', 'nik', 'nama_web', 'url', 'deskripsi',
-        'tag', 'role', 'status', 'hit_point',
+        'tag', 'role', 'status', 'status_link', 'hit_point',
         'status_checked_at', 'status_http_code',
         'status_response_time_ms', 'status_summary',
     ];

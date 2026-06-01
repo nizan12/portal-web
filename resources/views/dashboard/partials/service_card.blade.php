@@ -63,9 +63,9 @@
     {{-- Footer Actions --}}
     <div class="card-footer-premium">
         <div class="footer-left">
-            <span class="premium-status-dot {{ $service['status'] === 'aktif' ? '' : 'offline' }}" aria-hidden="true"></span>
-            <span class="text-[10px] font-semibold {{ $service['status'] === 'aktif' ? 'text-green-600' : 'text-red-600' }}">
-                {{ $service['status'] === 'aktif' ? 'Online' : 'Offline' }}
+            <span class="premium-status-dot {{ $service['is_online'] ? '' : 'offline' }}" aria-hidden="true"></span>
+            <span class="text-[10px] font-semibold {{ $service['is_online'] ? 'text-green-600' : 'text-red-600' }}">
+                {{ $service['is_online'] ? 'Online' : 'Offline' }}
             </span>
         </div>
 

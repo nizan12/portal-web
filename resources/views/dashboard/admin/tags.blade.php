@@ -101,64 +101,55 @@
         @endforelse
     </div>
 
+    @push('modals')
     {{-- ═══════════════════════════════════════════════════════
-         MODAL: Tambah/Edit Tag
-         Form nama tag + pilih layanan (checkbox).
+         MODAL: Tambah/Edit Tag (Premium Style)
          ═══════════════════════════════════════════════════════ --}}
-    <div id="tagModal" class="hidden fixed inset-0 z-[2000] bg-black/60 backdrop-blur-sm items-center justify-center overflow-y-auto p-5 transition-all duration-300">
-        <div class="bg-white rounded-3xl w-full max-w-[450px] shadow-2xl my-auto overflow-hidden transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
-            <div class="bg-[#080d5f] p-6 text-white flex justify-between items-center">
-                <h2 id="modalTitle" class="m-0 text-xl font-bold tracking-tight">Tambah Tag</h2>
-                <button type="button" onclick="closeModal()" class="text-white/70 hover:text-white transition-colors">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <div id="tagModal" class="hidden premium-modal-overlay">
+        <div class="premium-modal-shell">
+            <div class="premium-modal-card">
+                <button type="button" onclick="closeModal()" class="premium-modal-close-btn" aria-label="Tutup">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
-            </div>
 
-            <form id="tagForm" action="{{ route('admin.tags.store') }}" method="POST" class="p-8">
-                @csrf
-                <div id="methodField"></div>
-                
-                <div class="mb-6 space-y-2">
-                    <label for="nama_tag" class="block text-xs font-bold text-[#080d5f] uppercase letter-spacing-[0.5px]">Nama Tag</label>
-                    <input type="text" name="nama_tag" id="nama_tag" required 
-                           class="w-full h-12 px-4 bg-gray-50 border border-gray-200 rounded-xl outline-none text-[14px] focus:border-[#080d5f] focus:bg-white transition-all"
-                           placeholder="Contoh: Populer, Baru, Internal">
-                </div>
+                <h2 id="modalTitle" class="premium-modal-title">Tambah Tag</h2>
 
-                <div class="mb-8 space-y-2">
-                    <label class="block text-xs font-bold text-[#080d5f] uppercase letter-spacing-[0.5px]">Terapkan pada Layanan</label>
-                    <div class="max-h-[300px] overflow-y-auto border border-gray-200 rounded-2xl p-4 bg-gray-50/50 space-y-1">
-                        @foreach ($allLinks as $link)
-                            <label class="modal-link-item flex items-center gap-3 p-3 rounded-xl hover:bg-white hover:shadow-sm transition-all cursor-pointer group" onclick="toggleTagLinkHighlight(this)">
-                                <div class="relative flex items-center justify-center">
-                                    <input type="checkbox" name="link_ids[]" value="{{ $link->id_link }}" class="link-checkbox hidden" onchange="toggleTagLinkHighlight(this.parentElement.parentElement)">
-                                    <div class="w-5 h-5 rounded-md border-2 border-gray-300 bg-white group-[.is-selected]:bg-[#080d5f] group-[.is-selected]:border-[#080d5f] transition-all flex items-center justify-center">
-                                        <svg class="w-3.5 h-3.5 text-white opacity-0 group-[.is-selected]:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
-                                    </div>
-                                </div>
-                                <span class="text-sm font-semibold text-[#080d5f] group-[.is-selected]:text-[#080d5f]">{{ $link->nama_web }}</span>
-                            </label>
-                        @endforeach
+                <form id="tagForm" action="{{ route('admin.tags.store') }}" method="POST">
+                    @csrf
+                    <div id="methodField"></div>
+                    
+                    <div class="premium-modal-form-group">
+                        <label for="nama_tag" class="premium-modal-label">Nama Tag</label>
+                        <input type="text" name="nama_tag" id="nama_tag" required class="premium-modal-input" placeholder="Contoh: Populer, Baru, Internal">
                     </div>
-                </div>
 
-                <div class="flex gap-3 justify-end pt-4 border-t border-gray-100">
-                    <button type="button" onclick="closeModal()" 
-                            class="px-6 py-3 rounded-xl border border-gray-200 bg-white cursor-pointer font-bold text-[14px] text-gray-500 hover:bg-gray-50 transition-all">
-                        Batal
-                    </button>
-                    <button type="submit" 
-                            class="px-8 py-3 rounded-xl border-0 bg-[#080d5f] text-white cursor-pointer font-bold text-[14px] hover:bg-[#0c148c] shadow-lg shadow-blue-900/20 transition-all">
-                        Simpan Tag
-                    </button>
-                </div>
-            </form>
+                    <div class="premium-modal-form-group">
+                        <label class="premium-modal-label">Terapkan pada Layanan</label>
+                        <div style="max-height: 200px; overflow-y: auto; border: 1px solid rgba(8, 13, 95, 0.08); border-radius: 12px; padding: 12px; background: #f8fafc;">
+                            @foreach ($allLinks as $link)
+                                <label class="modal-link-item" onclick="toggleTagLinkHighlight(this)" style="display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 8px; cursor: pointer; transition: all 0.2s; margin-bottom: 4px;">
+                                    <input type="checkbox" name="link_ids[]" value="{{ $link->id_link }}" class="link-checkbox" onchange="toggleTagLinkHighlight(this.parentElement)" style="width: 16px; height: 16px; accent-color: #080d5f;">
+                                    <span style="font-size: 13px; font-weight: 600; color: #1e2243;">{{ $link->nama_web }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="premium-modal-actions">
+                        <button type="button" onclick="closeModal()" class="premium-modal-btn btn-cancel">Batal</button>
+                        <button type="submit" class="premium-modal-btn btn-save">Simpan Tag</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
+    @endpush
+@endsection
 
+@push('scripts')
     {{-- ═══════════════════════════════════════════════════════
          SCRIPT: Logika modal tag
          ═══════════════════════════════════════════════════════ --}}
@@ -167,12 +158,12 @@
             const checkbox = element.querySelector('.link-checkbox');
             if (checkbox.checked) {
                 element.classList.add('is-selected');
-                element.classList.add('bg-white');
-                element.classList.add('shadow-sm');
+                element.style.backgroundColor = '#fff';
+                element.style.boxShadow = '0 4px 12px rgba(8, 13, 95, 0.04)';
             } else {
                 element.classList.remove('is-selected');
-                element.classList.remove('bg-white');
-                element.classList.remove('shadow-sm');
+                element.style.backgroundColor = '';
+                element.style.boxShadow = '';
             }
         }
 
@@ -183,7 +174,7 @@
             document.getElementById('nama_tag').value = '';
             document.querySelectorAll('.link-checkbox').forEach(cb => {
                 cb.checked = false;
-                toggleTagLinkHighlight(cb.parentElement.parentElement);
+                toggleTagLinkHighlight(cb.parentElement);
             });
             showModal();
         }
@@ -197,7 +188,7 @@
             const linkedIds = JSON.parse(card.dataset.links || '[]');
             document.querySelectorAll('.link-checkbox').forEach(cb => {
                 cb.checked = linkedIds.includes(parseInt(cb.value));
-                toggleTagLinkHighlight(cb.parentElement.parentElement);
+                toggleTagLinkHighlight(cb.parentElement);
             });
             showModal();
         }
@@ -222,4 +213,4 @@
             if (event.target == document.getElementById('tagModal')) closeModal();
         }
     </script>
-@endsection
+@endpush

@@ -102,38 +102,52 @@
         @endforelse
     </div>
 
+    @push('modals')
     {{-- ═══════════════════════════════════════════════════════
-         MODAL: Tambah/Edit Kategori
-         Form nama kategori + pilih layanan (checkbox).
+         MODAL: Tambah/Edit Kategori (Premium Style)
          ═══════════════════════════════════════════════════════ --}}
-    <div id="categoryModal" class="hidden fixed inset-0 z-[1000] bg-black/50 items-center justify-center">
-        <div class="bg-white p-[30px] rounded-2xl w-full max-w-[450px] shadow-2xl">
-            <h2 id="modalTitle" class="m-0 mb-5 text-xl text-[#080d5f]">Tambah Kategori</h2>
-            <form id="categoryForm" action="{{ route('admin.categories.store') }}" method="POST">
-                @csrf
-                <div id="methodField"></div>
-                <div class="mb-5">
-                    <label for="nama_kategori" class="block text-xs font-semibold text-gray-500 mb-2">Nama Kategori</label>
-                    <input type="text" name="nama_kategori" id="nama_kategori" required class="w-full h-[45px] px-4 border border-gray-200 rounded-xl outline-none text-sm">
-                </div>
-                <div class="mb-5">
-                    <label class="block text-xs font-semibold text-gray-500 mb-2">Pilih Layanan (Link)</label>
-                    <div class="max-h-[250px] overflow-y-auto border border-gray-200 rounded-[14px] p-3 bg-white shadow-inner">
-                        @foreach ($allLinks as $link)
-                            <label class="modal-link-item" onclick="toggleLinkHighlight(this)">
-                                <input type="checkbox" name="link_ids[]" value="{{ $link->id_link }}" class="link-checkbox" onchange="toggleLinkHighlight(this.parentElement)">
-                                <span class="modal-link-label">{{ $link->nama_web }}</span>
-                            </label>
-                        @endforeach
+    <div id="categoryModal" class="hidden premium-modal-overlay">
+        <div class="premium-modal-shell">
+            <div class="premium-modal-card">
+                <button type="button" onclick="closeModal()" class="premium-modal-close-btn" aria-label="Tutup">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+
+                <h2 id="modalTitle" class="premium-modal-title">Tambah Kategori</h2>
+
+                <form id="categoryForm" action="{{ route('admin.categories.store') }}" method="POST">
+                    @csrf
+                    <div id="methodField"></div>
+
+                    <div class="premium-modal-form-group">
+                        <label for="nama_kategori" class="premium-modal-label">Nama Kategori</label>
+                        <input type="text" name="nama_kategori" id="nama_kategori" required class="premium-modal-input" placeholder="Contoh: Layanan Akademik">
                     </div>
-                </div>
-                <div class="flex gap-2.5 justify-end">
-                    <button type="button" onclick="closeModal()" class="px-5 py-2.5 rounded-[10px] border border-gray-200 bg-white cursor-pointer font-semibold">Batal</button>
-                    <button type="submit" class="px-5 py-2.5 rounded-[10px] border-0 bg-[#080d5f] text-white cursor-pointer font-semibold">Simpan</button>
-                </div>
-            </form>
+
+                    <div class="premium-modal-form-group">
+                        <label class="premium-modal-label">Pilih Layanan (Link)</label>
+                        <div style="max-height: 200px; overflow-y: auto; border: 1px solid rgba(8, 13, 95, 0.08); border-radius: 12px; padding: 12px; background: #f8fafc;">
+                            @foreach ($allLinks as $link)
+                                <label class="modal-link-item" onclick="toggleLinkHighlight(this)" style="display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 8px; cursor: pointer; transition: all 0.2s; margin-bottom: 4px;">
+                                    <input type="checkbox" name="link_ids[]" value="{{ $link->id_link }}" class="link-checkbox" onchange="toggleLinkHighlight(this.parentElement)" style="width: 16px; height: 16px; accent-color: #080d5f;">
+                                    <span class="modal-link-label" style="font-size: 13px; font-weight: 600; color: #1e2243;">{{ $link->nama_web }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="premium-modal-actions">
+                        <button type="button" onclick="closeModal()" class="premium-modal-btn btn-cancel">Batal</button>
+                        <button type="submit" class="premium-modal-btn btn-save">Simpan</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
+    @endpush
 
     {{-- ═══════════════════════════════════════════════════════
          SCRIPT: Logika modal kategori

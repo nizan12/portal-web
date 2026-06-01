@@ -37,6 +37,7 @@ class DashboardController extends Controller
 
         $services = Link::query()
             ->with('kategori')
+            ->where('status', 'aktif')
             ->where(function ($q) use ($userNik) {
                 $q->whereNull('nik')->orWhere('nik', $userNik);
             })
@@ -77,6 +78,8 @@ class DashboardController extends Controller
                     'description' => $link->deskripsi ?: 'Layanan website Politeknik Negeri Batam yang tersedia di portal POLTREE.',
                     'category' => $link->kategori?->nama_kategori ?: '',
                     'status' => $resolvedStatus,
+                    'status_link' => $link->status_link ?: 'belum dicek',
+                    'is_online' => $link->status_link !== 'bermasalah',
                     'is_custom' => $link->nik !== null,
                     'id' => $link->id_link,
                     'role' => $link->role,
@@ -247,5 +250,36 @@ class DashboardController extends Controller
         ]);
 
         return back()->with('success', 'Kata sandi berhasil diperbarui.');
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = auth('pengguna')->user();
+
+        $request->validate([
+            'nama_user' => 'required|string|max:255',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        $data = [
+            'nama_user' => $request->nama_user,
+        ];
+
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama jika ada
+            if ($user->foto && file_exists(public_path($user->foto))) {
+                @unlink(public_path($user->foto));
+            }
+
+            $file = $request->file('foto');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/profile_photos'), $filename);
+            
+            $data['foto'] = 'uploads/profile_photos/' . $filename;
+        }
+
+        $user->update($data);
+
+        return back()->with('success', 'Profil berhasil diperbarui.');
     }
 }

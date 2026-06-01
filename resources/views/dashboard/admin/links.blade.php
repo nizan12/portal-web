@@ -54,6 +54,7 @@
                     <tr>
                         <th class="pl-8">Layanan</th>
                         <th>Status</th>
+                        <th>Status Link</th>
                         <th>Kategori</th>
                         <th>Tag</th>
                         <th>Terakhir Dicek</th>
@@ -79,9 +80,33 @@
                             <td>
                                 @php $statusClass = $link->resolved_status === 'aktif' ? 'status-active' : 'status-inactive'; @endphp
                                 <span class="status-badge {{ $statusClass }}">
-                                    <span class="w-1.5 h-1.5 rounded-full mr-2 {{ $link->resolved_status === 'aktif' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]' }}"></span>
+                                    <span class="w-1.5 h-1.5 rounded-full {{ $link->resolved_status === 'aktif' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]' }}"></span>
                                     {{ ucfirst($link->resolved_status) }}
                                 </span>
+                            </td>
+                            <td>
+                                {{-- Status Link (API Check) --}}
+                                @if(!$link->status_checked_at)
+                                    <span class="status-badge bg-gray-50 text-gray-400 border border-gray-200/50 flex items-center w-max px-2.5 py-1 rounded-full text-[10px] font-bold">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+                                        Belum Dicek
+                                    </span>
+                                @elseif($link->status_link === 'aktif')
+                                    <span class="status-badge bg-emerald-50 text-emerald-700 border border-emerald-100/60 flex items-center w-max px-2.5 py-1 rounded-full text-[10px] font-bold" title="{{ $link->status_summary }}">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] animate-pulse"></span>
+                                        Online
+                                    </span>
+                                @elseif($link->status_link === 'bermasalah')
+                                    <span class="status-badge bg-rose-50 text-rose-700 border border-rose-100/60 flex items-center w-max px-2.5 py-1 rounded-full text-[10px] font-bold" title="{{ $link->status_summary }}">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]"></span>
+                                        Offline
+                                    </span>
+                                @else
+                                    <span class="status-badge bg-gray-50 text-gray-500 border border-gray-200/50 flex items-center w-max px-2.5 py-1 rounded-full text-[10px] font-bold">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                                        {{ ucfirst($link->status_link) }}
+                                    </span>
+                                @endif
                             </td>
                             <td><span class="badge-kategori">{{ $link->kategori?->nama_kategori ?: 'Umum' }}</span></td>
                             <td>
@@ -129,6 +154,7 @@
         <div class="table-card p-12 text-center opacity-50 mt-8">Tidak ada layanan ditemukan.</div>
     @endif
 
+    @push('modals')
     {{-- ═══════════════════════════════════════════════════════
          MODAL: Tambah/Edit Layanan
          ═══════════════════════════════════════════════════════ --}}
@@ -146,48 +172,51 @@
                     @csrf
                     <div id="methodField"></div>
 
-                    <div class="premium-modal-form-group">
-                        <label class="premium-modal-label">Nama Layanan</label>
-                        <input type="text" name="nama_web" id="nama_web" placeholder="Contoh: SIAKAD" required class="premium-modal-input">
-                    </div>
+                    {{-- Form scrollable wrapper to keep modal compact like confirm delete modal --}}
+                    <div class="premium-modal-scroll-container" style="max-height: 300px; overflow-y: auto; padding-right: 12px; margin-bottom: 20px;">
+                        <div class="premium-modal-form-group">
+                            <label class="premium-modal-label">Nama Layanan</label>
+                            <input type="text" name="nama_web" id="nama_web" placeholder="Contoh: SIAKAD" required class="premium-modal-input">
+                        </div>
 
-                    <div class="premium-modal-form-group">
-                        <label class="premium-modal-label">URL Layanan</label>
-                        <input text name="url" id="url" placeholder="https://example.com" required class="premium-modal-input">
-                    </div>
+                        <div class="premium-modal-form-group">
+                            <label class="premium-modal-label">URL Layanan</label>
+                            <input type="text" name="url" id="url" placeholder="https://example.com" required class="premium-modal-input">
+                        </div>
 
-                    <div class="premium-modal-form-group">
-                        <label class="premium-modal-label">Deskripsi Singkat</label>
-                        <textarea name="deskripsi" id="deskripsi" placeholder="Jelaskan fungsi layanan ini..." class="premium-modal-textarea"></textarea>
-                    </div>
+                        <div class="premium-modal-form-group">
+                            <label class="premium-modal-label">Deskripsi Singkat</label>
+                            <textarea name="deskripsi" id="deskripsi" placeholder="Jelaskan fungsi layanan ini..." class="premium-modal-textarea"></textarea>
+                        </div>
 
-                    <div class="premium-modal-form-group">
-                        <label class="premium-modal-label">Kategori</label>
-                        <select name="id_kategori" id="id_kategori" class="premium-modal-input appearance-none cursor-pointer">
-                            <option value="">Pilih Kategori...</option>
-                            @foreach($categories as $cat)
-                                <option value="{{ $cat->id_kategori }}">{{ $cat->nama_kategori }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                        <div class="premium-modal-form-group">
+                            <label class="premium-modal-label">Kategori</label>
+                            <select name="id_kategori" id="id_kategori" class="premium-modal-input appearance-none cursor-pointer">
+                                <option value="">Pilih Kategori...</option>
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id_kategori }}">{{ $cat->nama_kategori }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
-                    <div class="premium-modal-form-group">
-                        <label class="premium-modal-label">Status Layanan</label>
-                        <select name="status" id="status" class="premium-modal-input appearance-none cursor-pointer">
-                            <option value="aktif">Aktif</option>
-                            <option value="tidak aktif">Tidak Aktif</option>
-                        </select>
-                    </div>
+                        <div class="premium-modal-form-group">
+                            <label class="premium-modal-label">Status Layanan</label>
+                            <select name="status" id="status" class="premium-modal-input appearance-none cursor-pointer">
+                                <option value="aktif">Aktif</option>
+                                <option value="tidak aktif">Tidak Aktif</option>
+                            </select>
+                        </div>
 
-                    <div class="premium-modal-form-group">
-                        <label class="premium-modal-label">Tag Layanan</label>
-                        <div class="premium-modal-tags-wrapper">
-                            @foreach($allTags as $tag)
-                                <label class="premium-modal-tag-pill">
-                                    <input type="checkbox" name="tag_ids[]" value="{{ $tag->id_tag }}">
-                                    <span>{{ $tag->nama_tag }}</span>
-                                </label>
-                            @endforeach
+                        <div class="premium-modal-form-group">
+                            <label class="premium-modal-label">Tag Layanan</label>
+                            <div class="premium-modal-tags-wrapper">
+                                @foreach($allTags as $tag)
+                                    <label class="premium-modal-tag-pill">
+                                        <input type="checkbox" name="tag_ids[]" value="{{ $tag->id_tag }}">
+                                        <span>{{ $tag->nama_tag }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
 
@@ -199,6 +228,7 @@
             </div>
         </div>
     </div>
+    @endpush
 
     {{-- ═══════════════════════════════════════════════════════
          SCRIPT: Logika modal layanan

@@ -886,6 +886,7 @@ button, input, select, textarea { font: inherit; }
 .status-badge {
     display: inline-flex;
     align-items: center;
+    gap: 8px;
     padding: 5px 14px;
     border-radius: 10px;
     font-size: 11px;
@@ -2659,9 +2660,10 @@ select.category-builder-link-input { background-image: url("data:image/svg+xml,%
     display: none;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 40px 20px;
     background: rgba(10, 17, 84, 0.3) !important;
     backdrop-filter: blur(12px) !important;
+    overflow-y: auto;
 }
 
 .premium-modal-overlay.flex {
@@ -2682,6 +2684,7 @@ select.category-builder-link-input { background-image: url("data:image/svg+xml,%
     box-shadow: 0 24px 60px rgba(10, 17, 114, 0.16);
     position: relative;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    margin: auto;
 }
 
 .premium-modal-card {
@@ -2793,6 +2796,17 @@ select.category-builder-link-input { background-image: url("data:image/svg+xml,%
 .premium-modal-tags-wrapper::-webkit-scrollbar-thumb {
     background: #c3cbda;
     border-radius: 10px;
+}
+
+.premium-modal-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+.premium-modal-scroll-container::-webkit-scrollbar-thumb {
+    background: rgba(10, 17, 114, 0.15);
+    border-radius: 10px;
+}
+.premium-modal-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(10, 17, 114, 0.3);
 }
 
 .premium-modal-tag-pill {

@@ -13,7 +13,9 @@ class Admin extends Authenticatable
     protected $fillable = [
         'nik_admin',
         'nama',
+        'email',
         'password',
+        'foto',
     ];
 
     protected $hidden = ['password'];

@@ -44,7 +44,7 @@ class CheckLinkStatusesCommand extends Command
             $link->fill($result);
             $link->save();
 
-            $summary[$result['status']] = ($summary[$result['status']] ?? 0) + 1;
+            $summary[$result['status_link']] = ($summary[$result['status_link']] ?? 0) + 1;
         });
 
         $this->newLine(2);

@@ -33,11 +33,41 @@ class DashboardController extends Controller
             ],
         ];
 
+        // Statistik Tambahan Lengkap
+        $totalPengguna = Pengguna::count();
+        $totalLayanan = Link::count();
+        $totalKategori = Kategori::count();
+
+        // 1. Publik vs Pribadi
+        $layananPublik = Link::whereNull('nik')->count();
+        $layananPribadi = Link::whereNotNull('nik')->count();
+
+        // 2. Health Status Check
+        $layananAman = Link::where('status_http_code', 200)->count();
+        $layananDowntime = Link::whereNotNull('status_http_code')->where('status_http_code', '!=', 200)->count();
+        $layananBelumDicek = Link::whereNull('status_http_code')->count();
+
+        // 3. Waktu Respon Rata-rata
+        $avgResponseTime = round(Link::whereNotNull('status_response_time_ms')->avg('status_response_time_ms') ?? 0);
+
+        // 4. Layanan Terpopuler (Top Clicked Links)
+        $topLinks = Link::orderBy('hit_point', 'desc')->take(5)->get();
+
+        // 5. Kategori Terpopuler
+        $topCategories = Kategori::withCount('links')->orderBy('links_count', 'desc')->take(5)->get();
+
+        $statsDetail = compact(
+            'totalPengguna', 'totalLayanan', 'totalKategori',
+            'layananPublik', 'layananPribadi',
+            'layananAman', 'layananDowntime', 'layananBelumDicek',
+            'avgResponseTime', 'topLinks', 'topCategories'
+        );
+
         $menuItems = $this->adminMenuItems('dashboard');
         $pageTitle = 'Dashboard Admin - ' . config('app.name', 'POLTREE');
         $topbarTitle = 'Dashboard';
 
-        return view('dashboard.admin.index', compact('admin', 'stats', 'menuItems', 'pageTitle', 'topbarTitle'));
+        return view('dashboard.admin.index', compact('admin', 'stats', 'statsDetail', 'menuItems', 'pageTitle', 'topbarTitle'));
     }
 
     public function updateAdminPassword(Request $request)
@@ -58,6 +88,37 @@ class DashboardController extends Controller
         ]);
 
         return back()->with('success', 'Kata sandi berhasil diperbarui.');
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $admin = auth('admin')->user();
+
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ]);
+
+        $data = [
+            'nama' => $request->nama,
+        ];
+
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama jika ada
+            if ($admin->foto && file_exists(public_path($admin->foto))) {
+                @unlink(public_path($admin->foto));
+            }
+
+            $file = $request->file('foto');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/profile_photos'), $filename);
+            
+            $data['foto'] = 'uploads/profile_photos/' . $filename;
+        }
+
+        $admin->update($data);
+
+        return back()->with('success', 'Profil berhasil diperbarui.');
     }
 
     private function formatAdminStat(int $value): string

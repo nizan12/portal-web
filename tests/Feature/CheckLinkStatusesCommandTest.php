@@ -24,6 +24,7 @@ beforeEach(function () {
         $table->text('deskripsi')->nullable();
         $table->string('tag')->nullable();
         $table->string('status')->nullable();
+        $table->string('status_link')->nullable();
         $table->unsignedBigInteger('hit_point')->default(0);
         $table->timestamp('status_checked_at')->nullable();
         $table->unsignedSmallInteger('status_http_code')->nullable();
@@ -42,32 +43,57 @@ it('updates link status automatically from remote website responses', function (
         'id_link' => 1,
         'nama_web' => 'Portal Aktif',
         'url' => 'online.example',
+        'status' => 'aktif',
     ]);
 
     Link::query()->create([
         'id_link' => 2,
         'nama_web' => 'Portal Bermasalah',
         'url' => 'down.example',
+        'status' => 'aktif',
     ]);
 
-    Http::fake(function ($request) {
-        return match (true) {
-            $request->url() === 'https://online.example' => Http::response('', 200),
-            $request->url() === 'https://down.example' => Http::response('', 503),
-            default => Http::response('', 404),
-        };
-    });
+    Http::fake([
+        'downtimecheck.vercel.app/api/check*' => function ($request) {
+            $url = $request->offsetGet('url') ?? '';
+            if (str_contains($url, 'online.example')) {
+                return Http::response([
+                    'success' => true,
+                    'data' => [
+                        'online' => true,
+                        'statusCode' => 200,
+                        'statusText' => 'OK',
+                        'responseTimeMs' => 120,
+                    ]
+                ], 200);
+            }
+            if (str_contains($url, 'down.example')) {
+                return Http::response([
+                    'success' => true,
+                    'data' => [
+                        'online' => false,
+                        'statusCode' => 503,
+                        'statusText' => 'Service Unavailable',
+                        'errorMessage' => 'Service Unavailable',
+                    ]
+                ], 200);
+            }
+            return Http::response(['success' => false], 404);
+        }
+    ]);
 
     Artisan::call('links:check-status');
 
     $onlineLink = Link::query()->find(1);
     $downLink = Link::query()->find(2);
 
-    expect($onlineLink?->status)->toBe('aktif');
+    expect($onlineLink?->status_link)->toBe('aktif');
+    expect($onlineLink?->status)->toBe('aktif'); // manual status unchanged
     expect($onlineLink?->status_http_code)->toBe(200);
     expect($onlineLink?->status_checked_at)->not->toBeNull();
 
-    expect($downLink?->status)->toBe('bermasalah');
+    expect($downLink?->status_link)->toBe('bermasalah');
+    expect($downLink?->status)->toBe('aktif'); // manual status unchanged
     expect($downLink?->status_http_code)->toBe(503);
     expect($downLink?->status_checked_at)->not->toBeNull();
 });
@@ -77,20 +103,32 @@ it('falls back to get request when head is not supported', function () {
         'id_link' => 3,
         'nama_web' => 'Portal Head Fallback',
         'url' => 'head-only.example',
+        'status' => 'aktif',
     ]);
 
-    Http::fake(function ($request) {
-        return match (true) {
-            $request->url() === 'https://head-only.example' && $request->method() === 'HEAD' => Http::response('', 405),
-            $request->url() === 'https://head-only.example' && $request->method() === 'GET' => Http::response('OK', 200),
-            default => Http::response('', 404),
-        };
-    });
+    Http::fake([
+        'downtimecheck.vercel.app/api/check*' => function ($request) {
+            $url = $request->offsetGet('url') ?? '';
+            if (str_contains($url, 'head-only.example')) {
+                return Http::response([
+                    'success' => true,
+                    'data' => [
+                        'online' => true,
+                        'statusCode' => 200,
+                        'statusText' => 'OK',
+                        'responseTimeMs' => 150,
+                    ]
+                ], 200);
+            }
+            return Http::response(['success' => false], 404);
+        }
+    ]);
 
     Artisan::call('links:check-status', ['--id' => [3]]);
 
     $fallbackLink = Link::query()->find(3);
 
-    expect($fallbackLink?->status)->toBe('aktif');
+    expect($fallbackLink?->status_link)->toBe('aktif');
+    expect($fallbackLink?->status)->toBe('aktif'); // manual status unchanged
     expect($fallbackLink?->status_http_code)->toBe(200);
 });

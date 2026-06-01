@@ -17,6 +17,7 @@ class ServiceController extends Controller
 
         $services = Link::query()
             ->with('kategori')
+            ->where('status', 'aktif')
             ->when($search !== '', function ($items) use ($search) {
                 $items->where(function ($query) use ($search) {
                     $keyword = '%' . $search . '%';
@@ -48,7 +49,8 @@ class ServiceController extends Controller
                     'description' => $link->deskripsi ?: 'Website Politeknik Negeri Batam (polibatam.ac.id) adalah website resmi kampus yang berfungsi sebagai pusat informasi dan layanan digital untuk mahasiswa, calon mahasiswa, dosen, dan masyarakat umum.',
                     'category' => $category,
                     'status' => $resolvedStatus,
-                    'is_online' => $resolvedStatus === 'aktif',
+                    'status_link' => $link->status_link ?: 'belum dicek',
+                    'is_online' => $link->status_link !== 'bermasalah',
                 ];
             });
 

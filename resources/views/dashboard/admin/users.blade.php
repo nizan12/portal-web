@@ -102,83 +102,117 @@
         </div>
     @endif
 
+    @push('modals')
     {{-- MODAL: Tambah Pengguna --}}
-    <div id="addModal" class="password-modal hidden">
-        <div class="password-modal-content">
-            <h2 class="m-0 mb-5 text-xl font-bold text-[#080d5f] text-center">Tambah Pengguna</h2>
-            <form action="{{ route('admin.users.store') }}" method="POST">
-                @csrf
-                <div class="form-group">
-                    <label class="form-label">NIK</label>
-                    <input type="text" name="nik" required class="form-input" placeholder="Masukkan NIK">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Nama</label>
-                    <input type="text" name="nama_user" required class="form-input" placeholder="Masukkan nama lengkap">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" name="email" required class="form-input" placeholder="Masukkan email">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Role</label>
-                    <select name="jabatan" required class="form-input">
-                        <option value="">Pilih Role</option>
-                        <option value="Dosen">Dosen</option>
-                        <option value="Tata Usaha">Tata Usaha</option>
-                        <option value="Laboran">Laboran</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Kata Sandi</label>
-                    <input type="password" name="password" required class="form-input" placeholder="Masukkan kata sandi">
-                </div>
-                <div class="flex gap-2.5 mt-8">
-                    <button type="button" onclick="closeAddModal()" class="flex-1 h-12 rounded-xl border border-gray-200 bg-white cursor-pointer font-semibold text-gray-500">Batal</button>
-                    <button type="submit" class="flex-1 h-12 rounded-xl border-0 bg-[#080d5f] text-white cursor-pointer font-semibold">Simpan</button>
-                </div>
-            </form>
+    <div id="addModal" class="hidden premium-modal-overlay">
+        <div class="premium-modal-shell">
+            <div class="premium-modal-card">
+                <button type="button" onclick="closeAddModal()" class="premium-modal-close-btn" aria-label="Tutup">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+
+                <h2 class="premium-modal-title">Tambah Pengguna</h2>
+
+                <form action="{{ route('admin.users.store') }}" method="POST">
+                    @csrf
+                    
+                    <div class="premium-modal-form-group">
+                        <label class="premium-modal-label">NIK</label>
+                        <input type="text" name="nik" required class="premium-modal-input" placeholder="Masukkan NIK">
+                    </div>
+
+                    <div class="premium-modal-form-group">
+                        <label class="premium-modal-label">Nama</label>
+                        <input type="text" name="nama_user" required class="premium-modal-input" placeholder="Masukkan nama lengkap">
+                    </div>
+
+                    <div class="premium-modal-form-group">
+                        <label class="premium-modal-label">Email</label>
+                        <input type="email" name="email" required class="premium-modal-input" placeholder="Masukkan email">
+                    </div>
+
+                    <div class="premium-modal-form-group">
+                        <label class="premium-modal-label">Role</label>
+                        <select name="jabatan" required class="premium-modal-input">
+                            <option value="">Pilih Role</option>
+                            <option value="Dosen">Dosen</option>
+                            <option value="Tata Usaha">Tata Usaha</option>
+                            <option value="Laboran">Laboran</option>
+                        </select>
+                    </div>
+
+                    <div class="premium-modal-form-group">
+                        <label class="premium-modal-label">Kata Sandi</label>
+                        <input type="password" name="password" required class="premium-modal-input" placeholder="Masukkan kata sandi">
+                    </div>
+
+                    <div class="premium-modal-actions">
+                        <button type="button" onclick="closeAddModal()" class="premium-modal-btn btn-cancel">Batal</button>
+                        <button type="submit" class="premium-modal-btn btn-save">Simpan</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
     {{-- MODAL: Edit Pengguna --}}
-    <div id="editModal" class="password-modal hidden">
-        <div class="password-modal-content">
-            <h2 class="m-0 mb-5 text-xl font-bold text-[#080d5f] text-center">Edit Pengguna</h2>
-            <form id="editForm" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="form-group">
-                    <label class="form-label">NIK</label>
-                    <input type="text" id="edit_nik_display" disabled class="form-input bg-gray-50 opacity-70">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Nama</label>
-                    <input type="text" name="nama_user" id="edit_nama" required class="form-input">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" name="email" id="edit_email" required class="form-input">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Role</label>
-                    <select name="jabatan" id="edit_jabatan" required class="form-input">
-                        <option value="Dosen">Dosen</option>
-                        <option value="Tata Usaha">Tata Usaha</option>
-                        <option value="Laboran">Laboran</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Kata Sandi (Kosongkan jika tidak diubah)</label>
-                    <input type="password" name="password" class="form-input" placeholder="Masukkan kata sandi baru">
-                </div>
-                <div class="flex gap-2.5 mt-8">
-                    <button type="button" onclick="closeEditModal()" class="flex-1 h-12 rounded-xl border border-gray-200 bg-white cursor-pointer font-semibold text-gray-500">Batal</button>
-                    <button type="submit" class="flex-1 h-12 rounded-xl border-0 bg-[#080d5f] text-white cursor-pointer font-semibold">Simpan Perubahan</button>
-                </div>
-            </form>
+    <div id="editModal" class="hidden premium-modal-overlay">
+        <div class="premium-modal-shell">
+            <div class="premium-modal-card">
+                <button type="button" onclick="closeEditModal()" class="premium-modal-close-btn" aria-label="Tutup">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+
+                <h2 class="premium-modal-title">Edit Pengguna</h2>
+
+                <form id="editForm" method="POST">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="premium-modal-form-group">
+                        <label class="premium-modal-label">NIK</label>
+                        <input type="text" id="edit_nik_display" disabled class="premium-modal-input opacity-60" style="background-color: #f8fafc;">
+                    </div>
+
+                    <div class="premium-modal-form-group">
+                        <label class="premium-modal-label">Nama</label>
+                        <input type="text" name="nama_user" id="edit_nama" required class="premium-modal-input">
+                    </div>
+
+                    <div class="premium-modal-form-group">
+                        <label class="premium-modal-label">Email</label>
+                        <input type="email" name="email" id="edit_email" required class="premium-modal-input">
+                    </div>
+
+                    <div class="premium-modal-form-group">
+                        <label class="premium-modal-label">Role</label>
+                        <select name="jabatan" id="edit_jabatan" required class="premium-modal-input">
+                            <option value="Dosen">Dosen</option>
+                            <option value="Tata Usaha">Tata Usaha</option>
+                            <option value="Laboran">Laboran</option>
+                        </select>
+                    </div>
+
+                    <div class="premium-modal-form-group">
+                        <label class="premium-modal-label">Kata Sandi (Kosongkan jika tidak diubah)</label>
+                        <input type="password" name="password" class="premium-modal-input" placeholder="Masukkan kata sandi baru">
+                    </div>
+
+                    <div class="premium-modal-actions">
+                        <button type="button" onclick="closeEditModal()" class="premium-modal-btn btn-cancel">Batal</button>
+                        <button type="submit" class="premium-modal-btn btn-save">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
+    @endpush
 @endsection
 
 @push('scripts')

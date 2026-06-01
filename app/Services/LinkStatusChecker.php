@@ -97,7 +97,7 @@ class LinkStatusChecker
         }
 
         return [
-            'status' => $isOnline ? 'aktif' : 'bermasalah',
+            'status_link' => $isOnline ? 'aktif' : 'bermasalah',
             'status_checked_at' => $checkedAt,
             'status_http_code' => $statusCode,
             'status_response_time_ms' => $responseTimeMs ? (int) $responseTimeMs : null,
@@ -108,7 +108,7 @@ class LinkStatusChecker
     protected function problemResult($checkedAt, string $summary, ?int $elapsedMilliseconds = null): array
     {
         return [
-            'status' => 'bermasalah',
+            'status_link' => 'bermasalah',
             'status_checked_at' => $checkedAt,
             'status_http_code' => null,
             'status_response_time_ms' => $elapsedMilliseconds,

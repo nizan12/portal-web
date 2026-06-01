@@ -35,6 +35,8 @@ Route::middleware('auth:pengguna')->group(function () {
         ->name('pengguna.links.update');
     Route::delete('/pengguna/links/{id}', [PenggunaDashboardController::class, 'deleteUserLink'])
         ->name('pengguna.links.destroy');
+    Route::post('/pengguna/profile', [PenggunaDashboardController::class, 'updateProfile'])
+        ->name('pengguna.profile.update');
 });
 
 // Dashboard Admin
@@ -70,4 +72,5 @@ Route::middleware('auth:admin')->group(function () {
     Route::put('/admin/tags/{id}', [AdminTagController::class, 'updateTag'])->name('admin.tags.update');
     Route::delete('/admin/tags/{id}', [AdminTagController::class, 'deleteTag'])->name('admin.tags.destroy');
     Route::put('/admin/password', [AdminDashboardController::class, 'updateAdminPassword'])->name('admin.password.update');
+    Route::post('/admin/profile', [AdminDashboardController::class, 'updateProfile'])->name('admin.profile.update');
 });

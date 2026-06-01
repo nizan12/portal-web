@@ -107,12 +107,12 @@
 
                 @php $profileIconAsset = $resolveIconAsset('profile'); @endphp
                 <div class="profile-menu-wrap">
-                    <button type="button" class="admin-profile-button" aria-label="Profil admin" data-profile-toggle>
-                        @if ($profileIconAsset)
-                            <img src="{{ $profileIconAsset }}" alt="" aria-hidden="true">
+                    <button type="button" class="admin-profile-button" aria-label="Profil admin" data-profile-toggle style="padding: 0; overflow: hidden; display: grid; place-items: center;">
+                        @if(auth('admin')->user()->foto)
+                            <img src="{{ asset(auth('admin')->user()->foto) }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                         @else
-                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                {!! $iconPaths['profile'] !!}
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width: 20px; height: 20px; color: var(--navy);">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2m8-10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
                             </svg>
                         @endif
                     </button>
@@ -152,29 +152,43 @@
             {{-- ═══════════════════════════════════════════════
                  MODAL: Ubah Kata Sandi Admin
                  ═══════════════════════════════════════════════ --}}
-            <div id="passwordModal" class="password-modal hidden">
-                <div class="password-modal-content">
-                    <h2 class="m-0 mb-5 text-xl font-bold text-[#080d5f] text-center">Ubah Kata Sandi</h2>
-                    <form action="{{ route('admin.password.update') }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <div class="form-group">
-                            <label class="form-label">Kata Sandi Lama</label>
-                            <input type="password" name="old_password" required class="form-input" placeholder="Masukkan kata sandi lama">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Kata Sandi Baru</label>
-                            <input type="password" name="password" required class="form-input" placeholder="Masukkan kata sandi baru">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Konfirmasi Kata Sandi</label>
-                            <input type="password" name="password_confirmation" required class="form-input" placeholder="Ulangi kata sandi baru">
-                        </div>
-                        <div class="flex gap-2.5 mt-8">
-                            <button type="button" onclick="closePasswordModal()" class="flex-1 h-12 rounded-xl border border-gray-200 bg-white cursor-pointer font-semibold">Batal</button>
-                            <button type="submit" class="flex-1 h-12 rounded-xl border-0 bg-[#080d5f] text-white cursor-pointer font-semibold">Simpan</button>
-                        </div>
-                    </form>
+            <div id="passwordModal" class="hidden premium-modal-overlay">
+                <div class="premium-modal-shell">
+                    <div class="premium-modal-card">
+                        <button type="button" onclick="closePasswordModal()" class="premium-modal-close-btn" aria-label="Tutup">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+
+                        <h2 class="premium-modal-title">Ubah Kata Sandi</h2>
+
+                        <form action="{{ route('admin.password.update') }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="premium-modal-form-group">
+                                <label class="premium-modal-label">Kata Sandi Lama</label>
+                                <input type="password" name="old_password" required class="premium-modal-input" placeholder="Masukkan kata sandi lama">
+                            </div>
+
+                            <div class="premium-modal-form-group">
+                                <label class="premium-modal-label">Kata Sandi Baru</label>
+                                <input type="password" name="password" required class="premium-modal-input" placeholder="Masukkan kata sandi baru">
+                            </div>
+
+                            <div class="premium-modal-form-group">
+                                <label class="premium-modal-label">Konfirmasi Kata Sandi Baru</label>
+                                <input type="password" name="password_confirmation" required class="premium-modal-input" placeholder="Ulangi kata sandi baru">
+                            </div>
+
+                            <div class="premium-modal-actions">
+                                <button type="button" onclick="closePasswordModal()" class="premium-modal-btn btn-cancel">Batal</button>
+                                <button type="submit" class="premium-modal-btn btn-save">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
 
@@ -259,7 +273,7 @@
          ═══════════════════════════════════════════════════════ --}}
     <div id="profileModal" class="hidden premium-modal-overlay">
         <div class="premium-modal-shell">
-            <div class="premium-modal-card" style="max-width: 440px;">
+            <div class="premium-modal-card" style="max-width: 440px; padding: 28px 24px 20px;">
                 <button type="button" onclick="closeProfileModal()" class="premium-modal-close-btn" aria-label="Tutup">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -267,51 +281,95 @@
                     </svg>
                 </button>
                 
-                <h2 class="premium-modal-title" style="margin-bottom: 24px;">Profil Saya</h2>
+                <h2 class="premium-modal-title" style="margin-bottom: 20px;">Profil Saya</h2>
                 
-                <div class="profile-avatar-section" style="text-align: center; margin-bottom: 24px;">
-                    <div style="width: 76px; height: 76px; margin: 0 auto 14px; border-radius: 50%; background: linear-gradient(135deg, #080d5f, #0f179e); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(8, 13, 95, 0.15);">
-                        <span style="font-size: 26px; font-weight: 700; color: white; text-transform: uppercase;">
-                            {{ substr(auth('admin')->user()->nama ?? 'A', 0, 1) }}
+                <form id="profileForm" action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    
+                    <div class="profile-avatar-section" style="text-align: center; margin-bottom: 20px;">
+                        <div class="profile-avatar-wrapper" onclick="triggerProfilePhotoUpload()" style="position: relative; width: 80px; height: 80px; margin: 0 auto 12px; cursor: default; transition: all 0.2s ease;">
+                            <div id="profileAvatarCircle" style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, #080d5f, #0f179e); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(8, 13, 95, 0.15); border: 2px solid #fff;">
+                                @if(auth('admin')->user()->foto)
+                                    <img id="profileAvatarImg" src="{{ asset(auth('admin')->user()->foto) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                @else
+                                    <span id="profileAvatarInitials" style="font-size: 28px; font-weight: 700; color: white; text-transform: uppercase;">
+                                        {{ substr(auth('admin')->user()->nama ?? 'A', 0, 1) }}
+                                    </span>
+                                @endif
+                            </div>
+                            {{-- Camera Edit Overlay --}}
+                            <div class="avatar-edit-overlay" style="display: none; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.4); border-radius: 50%; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: bold; pointer-events: none;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                    <circle cx="12" cy="13" r="4"></circle>
+                                </svg>
+                            </div>
+                            <input type="file" name="foto" id="profilePhotoInput" accept="image/*" style="display: none;" onchange="previewProfilePhoto(this)">
+                        </div>
+
+                        <h3 class="profile-view-only" style="font-size: 16.5px; font-weight: 700; color: #1e2243; margin-bottom: 4px;">
+                            {{ auth('admin')->user()->nama ?? '-' }}
+                        </h3>
+                        
+                        <div class="profile-edit-only" style="display: none; width: 100%; max-width: 280px; margin: 0 auto 10px;">
+                            <label class="premium-modal-label" style="text-align: left; font-size: 11px; margin-bottom: 4px;">Nama Lengkap</label>
+                            <input type="text" name="nama" value="{{ auth('admin')->user()->nama }}" required class="premium-modal-input" style="width: 100%; text-align: center; font-weight: 700; font-size: 14.5px; height: 38px; border-radius: 10px;">
+                        </div>
+
+                        <span style="display: inline-block; font-size: 10.5px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #eef1f8; color: #080d5f; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Administrator
                         </span>
                     </div>
-                    <h3 style="font-size: 16.5px; font-weight: 700; color: #1e2243; margin-bottom: 4px;">
-                        {{ auth('admin')->user()->nama ?? '-' }}
-                    </h3>
-                    <span style="display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #eef1f8; color: #080d5f; text-transform: uppercase; letter-spacing: 0.5px;">
-                        Administrator
-                    </span>
-                </div>
 
-                <div class="profile-info-grid" style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; background: #f8fafc; border-radius: 14px; padding: 18px; border: 1px solid rgba(8, 13, 95, 0.04);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(8, 13, 95, 0.08); padding-bottom: 10px;">
-                        <span style="font-size: 13px; font-weight: 600; color: #8a8fa5;">Nomor Induk (NIK)</span>
-                        <span style="font-size: 13px; font-weight: 700; color: #1e2243;">
-                            {{ auth('admin')->user()->nik_admin ?? '-' }}
-                        </span>
+                    <div class="profile-info-grid" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; background: #f8fafc; border-radius: 14px; padding: 16px; border: 1px solid rgba(8, 13, 95, 0.04);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(8, 13, 95, 0.08); padding-bottom: 8px;">
+                            <span style="font-size: 12.5px; font-weight: 600; color: #8a8fa5;">Nomor Induk (NIK)</span>
+                            <span style="font-size: 12.5px; font-weight: 700; color: #1e2243;">
+                                {{ auth('admin')->user()->nik_admin ?? '-' }}
+                            </span>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(8, 13, 95, 0.08); padding-bottom: 8px;">
+                            <span style="font-size: 12.5px; font-weight: 600; color: #8a8fa5; display: flex; align-items: center; gap: 4px;">
+                                Alamat Email 
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="opacity-50" style="vertical-align: middle;" title="Email tidak dapat diubah">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                            </span>
+                            <span style="font-size: 12.5px; font-weight: 700; color: #8a8fa5;">
+                                {{ auth('admin')->user()->email ?? '-' }}
+                            </span>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 12.5px; font-weight: 600; color: #8a8fa5;">Status Akun</span>
+                            <span style="display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: #10b981;">
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+                                Aktif
+                            </span>
+                        </div>
                     </div>
                     
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(8, 13, 95, 0.08); padding-bottom: 10px;">
-                        <span style="font-size: 13px; font-weight: 600; color: #8a8fa5;">Alamat Email</span>
-                        <span style="font-size: 13px; font-weight: 700; color: #1e2243;">
-                            {{ auth('admin')->user()->email ?? '-' }}
-                        </span>
+                    <div class="premium-modal-actions" style="margin-top: 0; display: flex; gap: 12px; width: 100%;">
+                        <div class="profile-view-only" style="display: flex; gap: 12px; width: 100%;">
+                            <button type="button" onclick="toggleProfileEditMode(true)" class="flex-1 h-11 rounded-xl bg-[#080d5f] cursor-pointer font-semibold text-white hover:bg-[#0c148f] transition-all duration-200" style="font-size: 14px; border: none;">
+                                Edit Profil
+                            </button>
+                            <button type="button" onclick="closeProfileModal()" class="flex-1 h-11 rounded-xl border border-gray-200 bg-white cursor-pointer font-semibold text-[#1e2243] hover:bg-gray-50 transition-all duration-200" style="font-size: 14px;">
+                                Tutup
+                            </button>
+                        </div>
+                        <div class="profile-edit-only" style="display: none; gap: 12px; width: 100%;">
+                            <button type="submit" class="flex-1 h-11 rounded-xl bg-[#10b981] cursor-pointer font-semibold text-white hover:bg-[#0d9668] transition-all duration-200" style="font-size: 14px; border: none;">
+                                Simpan
+                            </button>
+                            <button type="button" onclick="toggleProfileEditMode(false)" class="flex-1 h-11 rounded-xl border border-gray-200 bg-white cursor-pointer font-semibold text-[#1e2243] hover:bg-gray-50 transition-all duration-200" style="font-size: 14px;">
+                                Batal
+                            </button>
+                        </div>
                     </div>
-
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 13px; font-weight: 600; color: #8a8fa5;">Status Akun</span>
-                        <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #10b981;">
-                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
-                            Aktif
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="premium-modal-actions" style="margin-top: 0; display: flex; gap: 12px;">
-                    <button type="button" onclick="closeProfileModal()" class="flex-1 h-11 rounded-xl border border-gray-200 bg-white cursor-pointer font-semibold text-[#1e2243] hover:bg-gray-50 transition-all duration-200" style="font-size: 14px;">
-                        Tutup
-                    </button>
-                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -362,7 +420,62 @@
             setTimeout(() => {
                 m.classList.add('hidden');
                 m.classList.remove('flex', 'closing');
+                toggleProfileEditMode(false); // Reset to view mode on close
             }, 300);
+        }
+
+        function toggleProfileEditMode(isEdit) {
+            const modal = document.getElementById('profileModal');
+            const viewGroup = modal.querySelectorAll('.profile-view-only');
+            const editGroup = modal.querySelectorAll('.profile-edit-only');
+            const overlay = modal.querySelector('.avatar-edit-overlay');
+            const wrapper = modal.querySelector('.profile-avatar-wrapper');
+
+            if (isEdit) {
+                viewGroup.forEach(el => el.style.setProperty('display', 'none', 'important'));
+                editGroup.forEach(el => el.style.setProperty('display', 'flex', 'important'));
+                if (overlay) overlay.style.display = 'flex';
+                if (wrapper) wrapper.style.cursor = 'pointer';
+            } else {
+                viewGroup.forEach(el => el.style.setProperty('display', '', ''));
+                editGroup.forEach(el => el.style.setProperty('display', 'none', 'important'));
+                if (overlay) overlay.style.display = 'none';
+                if (wrapper) wrapper.style.cursor = 'default';
+                
+                // Reset form
+                document.getElementById('profileForm').reset();
+                
+                // Restore original preview
+                const originalFoto = "{{ auth('admin')->user()->foto ? asset(auth('admin')->user()->foto) : '' }}";
+                const originalInitials = "{{ substr(auth('admin')->user()->nama ?? 'A', 0, 1) }}";
+                const circle = document.getElementById('profileAvatarCircle');
+                if (originalFoto) {
+                    circle.innerHTML = `<img id="profileAvatarImg" src="${originalFoto}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                } else {
+                    circle.innerHTML = `<span id="profileAvatarInitials" style="font-size: 28px; font-weight: 700; color: white; text-transform: uppercase;">${originalInitials}</span>`;
+                }
+            }
+        }
+
+        function triggerProfilePhotoUpload() {
+            const modal = document.getElementById('profileModal');
+            const editGroup = modal.querySelector('.profile-edit-only');
+            // Only trigger in edit mode
+            if (editGroup && editGroup.style.display !== 'none') {
+                document.getElementById('profilePhotoInput').click();
+            }
+        }
+
+        function previewProfilePhoto(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const circle = document.getElementById('profileAvatarCircle');
+                    circle.innerHTML = `<img id="profileAvatarImg" src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                };
+                reader.readAsDataURL(file);
+            }
         }
 
         function openPasswordModal() {
@@ -470,6 +583,7 @@
             }, 4000);
         };
     </script>
+    @stack('modals')
     @stack('scripts')
 </body>
 
