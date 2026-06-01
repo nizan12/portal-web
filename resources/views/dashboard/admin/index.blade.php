@@ -55,7 +55,7 @@
     </section>
 
     {{-- Grid Analisis Detail --}}
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px; margin-bottom: 28px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 24px; margin-bottom: 28px;">
         
         {{-- CARD 1: Health Monitor --}}
         <div style="background: white; border-radius: 20px; border: 1px solid rgba(8, 13, 95, 0.06); padding: 24px; box-shadow: 0 10px 30px rgba(8, 13, 95, 0.02); display: flex; flex-direction: column; justify-content: space-between;">
@@ -166,7 +166,7 @@
 
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px; margin-top: 24px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 24px; margin-top: 24px;">
 
         {{-- CARD 3: Layanan Populer (Berdasarkan Clicks / Hits) --}}
         <div style="background: white; border-radius: 20px; border: 1px solid rgba(8, 13, 95, 0.06); padding: 24px; box-shadow: 0 10px 30px rgba(8, 13, 95, 0.02);">

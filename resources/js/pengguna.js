@@ -170,10 +170,10 @@ document.addEventListener('DOMContentLoaded', function () {
         trigger.appendChild(triggerArrow);
         wrapper.appendChild(trigger);
 
-        // Create options container
+        // Create options container - Append to document.body to avoid clipping
         const optionsContainer = document.createElement('div');
         optionsContainer.className = 'premium-select-options';
-        wrapper.appendChild(optionsContainer);
+        document.body.appendChild(optionsContainer);
 
         // Build option items function
         const buildOptions = function () {
@@ -227,35 +227,30 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.premium-select-options.is-open').forEach(function (el) {
                 if (el !== optionsContainer) {
                     el.classList.remove('is-open');
-                    el.previousElementSibling.classList.remove('is-active');
-                    // Restore parent scroll container's overflow if needed
-                    const parentScroll = el.closest('.premium-modal-scroll-container');
-                    if (parentScroll) {
-                        parentScroll.style.setProperty('overflow-y', 'auto', 'important');
+                    const triggerEl = document.querySelector('.premium-select-trigger.is-active');
+                    if (triggerEl) {
+                        triggerEl.classList.remove('is-active');
                     }
                 }
             });
 
             buildOptions(); // Rebuild options to reflect current selection/state
+            
+            // Position options list right under the trigger
+            const rect = trigger.getBoundingClientRect();
+            optionsContainer.style.position = 'fixed';
+            optionsContainer.style.top = `${rect.bottom + 6}px`;
+            optionsContainer.style.left = `${rect.left}px`;
+            optionsContainer.style.width = `${rect.width}px`;
+            optionsContainer.style.zIndex = '99999';
+
             optionsContainer.classList.add('is-open');
             trigger.classList.add('is-active');
-
-            // Prevent clipping by parent scroll containers
-            const parentScroll = wrapper.closest('.premium-modal-scroll-container');
-            if (parentScroll) {
-                parentScroll.style.setProperty('overflow-y', 'visible', 'important');
-            }
         };
 
         const closeDropdown = function () {
             optionsContainer.classList.remove('is-open');
             trigger.classList.remove('is-active');
-
-            // Restore parent scroll container's overflow
-            const parentScroll = wrapper.closest('.premium-modal-scroll-container');
-            if (parentScroll) {
-                parentScroll.style.setProperty('overflow-y', 'auto', 'important');
-            }
         };
 
         trigger.addEventListener('click', function (e) {
@@ -275,10 +270,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Close on click outside
         document.addEventListener('click', function (e) {
-            if (!wrapper.contains(e.target)) {
+            if (!wrapper.contains(e.target) && !optionsContainer.contains(e.target)) {
                 closeDropdown();
             }
         });
+
+        // Close dropdowns on scroll or window resize to prevent floating issues
+        window.addEventListener('scroll', closeDropdown, true);
+        window.addEventListener('resize', closeDropdown);
 
         // Mark as initialized
         selectEl.dataset.premiumSelectInitialized = 'true';

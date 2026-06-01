@@ -288,6 +288,8 @@ textarea {
     display: flex;
     flex-direction: column;
     background: var(--bg-light);
+    min-width: 0;
+    width: 100%;
 }
 
 /* ── Topbar ───────────────────────────────────────────────── */
@@ -4863,4 +4865,141 @@ select.category-builder-link-input {
     border: 1.5px solid #dce2ee;
     background: #fff;
     font-size: 13px;
+}
+
+/* ═════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVENESS IMPROVEMENTS & SIDEBAR TOGGLE SYSTEM
+   ═════════════════════════════════════════════════════════════ */
+.mobile-sidebar-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #f1f4fb;
+    color: var(--navy);
+    border: none;
+    cursor: pointer;
+    margin-right: 14px;
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+}
+
+.mobile-sidebar-toggle:hover {
+    background: #e5e8f2;
+}
+
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 17, 84, 0.4);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1000;
+    transition: opacity 0.35s ease;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.view-table-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
+
+.table-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    display: block !important;
+}
+
+.admin-table {
+    min-width: 700px !important; /* Ensures tables don't get squished, letting them scroll horizontally within their card */
+    width: 100% !important;
+}
+
+@media (max-width: 991px) {
+    .mobile-sidebar-toggle {
+        display: flex;
+    }
+    
+    .admin-sidebar {
+        z-index: 1100;
+    }
+    
+    .admin-topbar {
+        padding: 0 20px;
+    }
+}
+
+@media (max-width: 640px) {
+    .admin-topbar {
+        padding: 0 16px;
+    }
+    
+    /* Responsive Page Headers for all pages (links, users, categories, tags, services) */
+    .links-header,
+    .users-header,
+    .categories-header,
+    .flex.justify-between.items-center.mb-6 {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 16px !important;
+        width: 100% !important;
+    }
+    
+    .links-header .flex,
+    .users-header .flex,
+    .categories-header .flex,
+    .flex.justify-between.items-center.mb-6 .flex {
+        width: 100% !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+    }
+
+    /* Keep headings left-aligned and fully readable */
+    .services-heading,
+    .categories-title,
+    .links-title,
+    .users-title {
+        font-size: 20px !important;
+        margin-bottom: 0 !important;
+    }
+    
+    /* Stretch buttons & view toggles to span full width */
+    .btn-add,
+    .btn-import {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        justify-content: center !important;
+        box-sizing: border-box !important;
+    }
+    
+    .view-toggle-wrap {
+        width: 100% !important;
+        display: flex !important;
+    }
+    
+    .view-toggle-btn {
+        flex: 1 !important;
+        justify-content: center !important;
+    }
+
+    /* Modal Form Action Buttons */
+    .premium-modal-actions {
+        flex-direction: column-reverse !important;
+        gap: 10px !important;
+    }
+
+    .premium-modal-btn {
+        width: 100% !important;
+        justify-content: center !important;
+    }
 }
