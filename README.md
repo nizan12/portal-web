@@ -1,4 +1,4 @@
-# POLTREE - Portal Link Terintegrasi (Premium Edition)
+# POLTREE - Portal Link Terintegrasi
 
 **POLTREE** adalah platform web portal layanan terintegrasi yang dirancang untuk mengorganisasi, memantau, dan mempercepat akses ke berbagai layanan internal dan eksternal kampus. Platform ini mengusung desain **Premium Glassmorphism**, interaksi intuitif, dan animasi fluid untuk memberikan pengalaman pengguna yang luar biasa.
 
@@ -56,6 +56,7 @@ cd poltree-rapip
 ### 2. Instalasi Dependensi Backend
 Instal pustaka PHP yang diperlukan menggunakan Composer:
 ```bash
+composer update
 composer install
 ```
 
