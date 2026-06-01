@@ -242,12 +242,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (officialSection) {
             const officialCards = officialSection.querySelectorAll('.service-card');
+            const totalOfficialCards = officialCards.length;
+            
             officialCards.forEach(card => {
                 if (!card.hidden && card.style.display !== 'none') {
                     officialVisible++;
                 }
             });
-            if (officialVisible === 0) {
+            if (totalOfficialCards > 0 && officialVisible === 0) {
                 officialSection.style.display = 'none';
             } else {
                 officialSection.style.display = 'block';
@@ -256,12 +258,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (personalSection) {
             const personalCards = personalSection.querySelectorAll('.service-card');
+            const totalPersonalCards = personalCards.length;
+            
             personalCards.forEach(card => {
                 if (!card.hidden && card.style.display !== 'none') {
                     personalVisible++;
                 }
             });
-            if (personalVisible === 0) {
+            if (totalPersonalCards > 0 && personalVisible === 0) {
                 personalSection.style.display = 'none';
             } else {
                 personalSection.style.display = 'block';
