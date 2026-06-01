@@ -51,7 +51,126 @@ graph TD
 
 ---
 
-## 🔍 3. Penjelasan Alur Kerja Per Modul
+## 🎭 3. Diagram Use Case & Relasi Database (ERD)
+
+### A. Diagram Use Case Sistem
+Diagram use case berikut memetakan interaksi dari dua aktor utama sistem POLTREE (Administrator dan Pengguna/Civitas):
+
+```mermaid
+usecaseDiagram
+    actor Administrator as "Administrator (Admin Kampus)"
+    actor Pengguna as "Pengguna (Civitas Akademik)"
+    actor Tamu as "Tamu / Belum Login"
+
+    Tamu --> (Melakukan Login Akun)
+    Tamu --> (Meminta Pemulihan Password)
+    Tamu --> (Melakukan Reset Sandi Baru)
+
+    Administrator --> (Melihat Grafik Statistik Dashboard)
+    Administrator --> (Mengelola CRUD Tautan Publik)
+    Administrator --> (Mengecek Uptime Kesehatan Layanan - Health Check)
+    Administrator --> (Mengelola CRUD Pengguna & Impor Massal CSV/XLS)
+    Administrator --> (Mengelola CRUD Kategori Induk)
+    Administrator --> (Mengelola CRUD Tag Layanan)
+    Administrator --> (Memperbarui Password & Profil Admin)
+
+    Pengguna --> (Melihat Katalog Layanan Publik)
+    Pengguna --> (Menyimpan / Bookmark Layanan)
+    Pengguna --> (Mengelola CRUD Tautan Pribadi / Kustom)
+    Pengguna --> (Mengelola CRUD Kategori Kustom & Pilih Ikon)
+    Pengguna --> (Memperbarui Password & Profil Pengguna)
+```
+
+### B. Diagram Relasi Entitas Basis Data (ERD)
+POLTREE memiliki database relational yang kokoh dengan skema relasi antar tabel sebagai berikut:
+
+```mermaid
+erDiagram
+    t_admin {
+        int id_admin PK
+        string nama
+        string email UK
+        string nip UK
+        string password
+        string foto
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    t_pengguna {
+        string nik PK
+        string nama
+        string email UK
+        string no_hp
+        string jabatan
+        string password
+        string foto
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    t_kategori {
+        int id_kategori PK
+        string nama_kategori
+        string icon
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    t_link {
+        int id_link PK
+        string nama_web
+        string url
+        int hit_point
+        string status "CHECK constraint: 'aktif' atau 'bermasalah'"
+        int status_http_code
+        int status_response_time_ms
+        text status_summary
+        timestamp status_checked_at
+        string nik FK "Nullable, berelasi ke t_pengguna"
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    t_terdaftar {
+        int id PK
+        int id_link FK
+        int id_kategori FK
+    }
+
+    t_tag {
+        int id_tag PK
+        string nama_tag
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    t_memiliki_tag {
+        int id PK
+        int id_link FK
+        int id_tag FK
+    }
+
+    t_audit_log {
+        int id PK
+        string table_name
+        string action
+        int record_id
+        text old_value
+        text new_value
+        timestamp created_at
+    }
+
+    t_pengguna ||--o{ t_link : "memiliki tautan kustom (1:N)"
+    t_link ||--o{ t_terdaftar : "terdaftar dalam kategori (1:N)"
+    t_kategori ||--o{ t_terdaftar : "menampung tautan terdaftar (1:N)"
+    t_link ||--o{ t_memiliki_tag : "memiliki label tag (1:N)"
+    t_tag ||--o{ t_memiliki_tag : "melabeli tautan (1:N)"
+```
+
+---
+
+## 🔍 4. Penjelasan Alur Kerja Per Modul
 
 ### 🔐 A. Modul Autentikasi & Reset Password
 * **Controller:** `App\Http\Controllers\Auth\LoginController`
@@ -136,7 +255,7 @@ graph TD
 
 ---
 
-## 🛠️ 4. Ringkasan Hubungan Antar Berkas
+## 🛠️ 5. Ringkasan Hubungan Antar Berkas
 
 | Fitur | Route (R) | Controller (C) | Model (M) | View (V) |
 |---|---|---|---|---|
