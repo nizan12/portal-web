@@ -120,7 +120,7 @@
                     {{-- Panel profil dropdown --}}
                     <div class="profile-panel" data-profile-panel hidden>
                         <div class="profile-panel-actions">
-                            <button type="button" class="profile-panel-btn" onclick="alert('Fitur profil belum tersedia')">
+                            <button type="button" class="profile-panel-btn" onclick="openProfileModal()">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2m8-10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
                                 </svg>
@@ -255,6 +255,68 @@
     </div>
 
     {{-- ═══════════════════════════════════════════════════════
+         MODAL: Profil Saya (Premium Style)
+         ═══════════════════════════════════════════════════════ --}}
+    <div id="profileModal" class="hidden premium-modal-overlay">
+        <div class="premium-modal-shell">
+            <div class="premium-modal-card" style="max-width: 440px;">
+                <button type="button" onclick="closeProfileModal()" class="premium-modal-close-btn" aria-label="Tutup">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+                
+                <h2 class="premium-modal-title" style="margin-bottom: 24px;">Profil Saya</h2>
+                
+                <div class="profile-avatar-section" style="text-align: center; margin-bottom: 24px;">
+                    <div style="width: 76px; height: 76px; margin: 0 auto 14px; border-radius: 50%; background: linear-gradient(135deg, #080d5f, #0f179e); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(8, 13, 95, 0.15);">
+                        <span style="font-size: 26px; font-weight: 700; color: white; text-transform: uppercase;">
+                            {{ substr(auth('admin')->user()->nama ?? 'A', 0, 1) }}
+                        </span>
+                    </div>
+                    <h3 style="font-size: 16.5px; font-weight: 700; color: #1e2243; margin-bottom: 4px;">
+                        {{ auth('admin')->user()->nama ?? '-' }}
+                    </h3>
+                    <span style="display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px; background: #eef1f8; color: #080d5f; text-transform: uppercase; letter-spacing: 0.5px;">
+                        Administrator
+                    </span>
+                </div>
+
+                <div class="profile-info-grid" style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; background: #f8fafc; border-radius: 14px; padding: 18px; border: 1px solid rgba(8, 13, 95, 0.04);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(8, 13, 95, 0.08); padding-bottom: 10px;">
+                        <span style="font-size: 13px; font-weight: 600; color: #8a8fa5;">Nomor Induk (NIK)</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #1e2243;">
+                            {{ auth('admin')->user()->nik_admin ?? '-' }}
+                        </span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(8, 13, 95, 0.08); padding-bottom: 10px;">
+                        <span style="font-size: 13px; font-weight: 600; color: #8a8fa5;">Alamat Email</span>
+                        <span style="font-size: 13px; font-weight: 700; color: #1e2243;">
+                            {{ auth('admin')->user()->email ?? '-' }}
+                        </span>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 13px; font-weight: 600; color: #8a8fa5;">Status Akun</span>
+                        <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #10b981;">
+                            <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+                            Aktif
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="premium-modal-actions" style="margin-top: 0; display: flex; gap: 12px;">
+                    <button type="button" onclick="closeProfileModal()" class="flex-1 h-11 rounded-xl border border-gray-200 bg-white cursor-pointer font-semibold text-[#1e2243] hover:bg-gray-50 transition-all duration-200" style="font-size: 14px;">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- ═══════════════════════════════════════════════════════
          SCRIPT: Profil toggle & Password modal
          ═══════════════════════════════════════════════════════ --}}
     <script>
@@ -280,6 +342,28 @@
                 });
             }
         });
+
+        function openProfileModal() {
+            const m = document.getElementById('profileModal');
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+            
+            // Close topbar profile panel
+            const profilePanel = document.querySelector('[data-profile-panel]');
+            if (profilePanel) {
+                profilePanel.setAttribute('hidden', '');
+            }
+        }
+
+        function closeProfileModal() {
+            const m = document.getElementById('profileModal');
+            if (!m) return;
+            m.classList.add('closing');
+            setTimeout(() => {
+                m.classList.add('hidden');
+                m.classList.remove('flex', 'closing');
+            }, 300);
+        }
 
         function openPasswordModal() {
             const m = document.getElementById('passwordModal');

@@ -347,8 +347,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const hasOpenCategoryBuilder = categoryBuilder.modal ? categoryBuilder.modal.classList.contains('is-open') : false;
         const hasOpenLinkModal = document.getElementById('linkModal')?.classList.contains('flex');
         const hasOpenPasswordModal = document.getElementById('passwordModal')?.classList.contains('flex');
+        const hasOpenProfileModal = document.getElementById('profileModal')?.classList.contains('flex');
 
-        document.body.classList.toggle('modal-open', hasOpenCategoryBuilder || hasOpenLinkModal || hasOpenPasswordModal);
+        document.body.classList.toggle('modal-open', hasOpenCategoryBuilder || hasOpenLinkModal || hasOpenPasswordModal || hasOpenProfileModal);
     };
 
     const findTriggerByTitle = function (serviceTitle) {
@@ -1300,6 +1301,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const m = document.getElementById('passwordModal');
         m.classList.add('hidden');
         m.classList.remove('flex');
+    };
+
+    const originalOpenProfileModal = window.openProfileModal;
+    window.openProfileModal = function() {
+        if (typeof originalOpenProfileModal === 'function') originalOpenProfileModal();
+        updateBodyLock();
+    };
+
+    const originalCloseProfileModal = window.closeProfileModal;
+    window.closeProfileModal = function() {
+        if (typeof originalCloseProfileModal === 'function') originalCloseProfileModal();
+        setTimeout(updateBodyLock, 350);
     };
 
     window.openCategoryBuilder = openCategoryBuilder;

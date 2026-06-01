@@ -7,6 +7,7 @@ use App\Models\Admin;
 use App\Models\Pengguna;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -19,7 +20,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Proses login — cek t_admin dulu, lalu t_pengguna (plaintext password).
+     * Proses login — cek t_admin dulu, lalu t_pengguna (Hash::check dengan plaintext fallback).
      */
     public function store(Request $request)
     {
@@ -37,7 +38,7 @@ class LoginController extends Controller
         // ── 1. Coba login sebagai Admin (t_admin) ──────────────────────────
         $admin = Admin::where('nik_admin', $nip)->first();
 
-        if ($admin && $admin->password === $password) {
+        if ($admin && (Hash::check($password, $admin->password) || $admin->password === $password)) {
             Auth::guard('admin')->login($admin, $request->boolean('remember'));
             $request->session()->regenerate();
 
@@ -49,7 +50,7 @@ class LoginController extends Controller
             ->orWhere('email', $nip)
             ->first();
 
-        if ($pengguna && $pengguna->password === $password) {
+        if ($pengguna && (Hash::check($password, $pengguna->password) || $pengguna->password === $password)) {
             Auth::guard('pengguna')->login($pengguna, $request->boolean('remember'));
             $request->session()->regenerate();
 
