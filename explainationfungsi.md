@@ -57,28 +57,50 @@ graph TD
 Diagram use case berikut memetakan interaksi dari dua aktor utama sistem POLTREE (Administrator dan Pengguna/Civitas):
 
 ```mermaid
-usecaseDiagram
-    actor Administrator as "Administrator (Admin Kampus)"
-    actor Pengguna as "Pengguna (Civitas Akademik)"
-    actor Tamu as "Tamu / Belum Login"
+graph LR
+    subgraph Aktor
+        Admin["👑 Administrator (Admin Kampus)"]
+        User["👤 Pengguna (Civitas Akademik)"]
+        Tamu["🔒 Tamu / Belum Login"]
+    end
 
-    Tamu --> (Melakukan Login Akun)
-    Tamu --> (Meminta Pemulihan Password)
-    Tamu --> (Melakukan Reset Sandi Baru)
+    subgraph "Use Case Autentikasi"
+        UC_Login["Melakukan Login Akun"]
+        UC_Forgot["Meminta Pemulihan Password"]
+        UC_Reset["Melakukan Reset Sandi Baru"]
+    end
 
-    Administrator --> (Melihat Grafik Statistik Dashboard)
-    Administrator --> (Mengelola CRUD Tautan Publik)
-    Administrator --> (Mengecek Uptime Kesehatan Layanan - Health Check)
-    Administrator --> (Mengelola CRUD Pengguna & Impor Massal CSV/XLS)
-    Administrator --> (Mengelola CRUD Kategori Induk)
-    Administrator --> (Mengelola CRUD Tag Layanan)
-    Administrator --> (Memperbarui Password & Profil Admin)
+    subgraph "Use Case Panel Admin"
+        UC_Dash["Melihat Grafik & Statistik Dashboard"]
+        UC_PubLink["Mengelola CRUD Tautan Publik"]
+        UC_Health["Pengecekan Uptime - Health Check"]
+        UC_Users["Mengelola CRUD Pengguna & Impor CSV/XLS"]
+        UC_Cat["Mengelola CRUD Kategori Induk"]
+        UC_Tag["Mengelola CRUD Tag Layanan"]
+    end
 
-    Pengguna --> (Melihat Katalog Layanan Publik)
-    Pengguna --> (Menyimpan / Bookmark Layanan)
-    Pengguna --> (Mengelola CRUD Tautan Pribadi / Kustom)
-    Pengguna --> (Mengelola CRUD Kategori Kustom & Pilih Ikon)
-    Pengguna --> (Memperbarui Password & Profil Pengguna)
+    subgraph "Use Case Panel Pengguna"
+        UC_Katalog["Melihat Katalog Layanan Publik"]
+        UC_Save["Menyimpan / Bookmark Layanan"]
+        UC_PriLink["Mengelola CRUD Tautan Pribadi"]
+        UC_UserCat["Mengelola CRUD Kategori Kustom & Ikon"]
+    end
+
+    Tamu --> UC_Login
+    Tamu --> UC_Forgot
+    Tamu --> UC_Reset
+
+    Admin --> UC_Dash
+    Admin --> UC_PubLink
+    Admin --> UC_Health
+    Admin --> UC_Users
+    Admin --> UC_Cat
+    Admin --> UC_Tag
+
+    User --> UC_Katalog
+    User --> UC_Save
+    User --> UC_PriLink
+    User --> UC_UserCat
 ```
 
 ### B. Diagram Relasi Entitas Basis Data (ERD)
