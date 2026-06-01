@@ -38,6 +38,12 @@ class LinkController extends Controller
 
     public function storeLink(Request $request)
     {
+        $url = $request->input('url');
+        if ($url && !preg_match('/^(https?:\/\/)/i', $url)) {
+            $url = 'https://' . $url;
+            $request->merge(['url' => $url]);
+        }
+
         $request->validate([
             'nama_web' => 'required|string|max:255',
             'url' => 'required|string|max:255',
@@ -67,6 +73,12 @@ class LinkController extends Controller
 
     public function updateLink(Request $request, $id)
     {
+        $url = $request->input('url');
+        if ($url && !preg_match('/^(https?:\/\/)/i', $url)) {
+            $url = 'https://' . $url;
+            $request->merge(['url' => $url]);
+        }
+
         $request->validate([
             'nama_web' => 'required|string|max:255',
             'url' => 'required|string|max:255',

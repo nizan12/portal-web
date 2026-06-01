@@ -140,6 +140,12 @@ class DashboardController extends Controller
 
     public function storeUserLink(Request $request)
     {
+        $url = $request->input('url');
+        if ($url && !preg_match('/^(https?:\/\/)/i', $url)) {
+            $url = 'https://' . $url;
+            $request->merge(['url' => $url]);
+        }
+
         $request->validate([
             'nama_web' => 'required|string|max:255',
             'url' => 'required|string|max:255',
@@ -170,6 +176,12 @@ class DashboardController extends Controller
 
     public function updateUserLink(Request $request, $id)
     {
+        $url = $request->input('url');
+        if ($url && !preg_match('/^(https?:\/\/)/i', $url)) {
+            $url = 'https://' . $url;
+            $request->merge(['url' => $url]);
+        }
+
         $request->validate([
             'nama_web' => 'required|string|max:255',
             'url' => 'required|string|max:255',
