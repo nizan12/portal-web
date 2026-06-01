@@ -1,5 +1,17 @@
 # POLTREE - Portal Link Terintegrasi
 
+<div align="center">
+  <a href="README.md">
+    <img src="https://img.shields.io/badge/README-Panduan%20Utama-blue?style=for-the-badge&logo=markdown&logoColor=white" alt="README" />
+  </a>
+  &nbsp;&nbsp;
+  <a href="explainationfungsi.md">
+    <img src="https://img.shields.io/badge/EXPLAINATION-Alur%20Kerja%20MVC-grey?style=for-the-badge&logo=laravel&logoColor=white" alt="Explaination Fungsi" />
+  </a>
+</div>
+
+---
+
 **POLTREE** adalah platform web portal layanan terintegrasi yang dirancang untuk mengorganisasi, memantau, dan mempercepat akses ke berbagai layanan internal dan eksternal kampus. Platform ini mengusung desain **Premium Glassmorphism**, interaksi intuitif, dan animasi fluid untuk memberikan pengalaman pengguna yang luar biasa.
 
 ---

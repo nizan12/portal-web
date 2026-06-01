@@ -1,5 +1,17 @@
 # Penjelasan Alur Kerja Fungsi Sistem POLTREE (MVC dan Routing)
 
+<div align="center">
+  <a href="README.md">
+    <img src="https://img.shields.io/badge/README-Panduan%20Utama-grey?style=for-the-badge&logo=markdown&logoColor=white" alt="README" />
+  </a>
+  &nbsp;&nbsp;
+  <a href="explainationfungsi.md">
+    <img src="https://img.shields.io/badge/EXPLAINATION-Alur%20Kerja%20MVC-blue?style=for-the-badge&logo=laravel&logoColor=white" alt="Explaination Fungsi" />
+  </a>
+</div>
+
+---
+
 Dokumen ini menjelaskan secara komprehensif alur kerja, hubungan komponen Model-View-Controller (MVC), serta mekanisme Routing pada proyek POLTREE (Portal Link Terintegrasi).
 
 ---
