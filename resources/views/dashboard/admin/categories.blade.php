@@ -15,12 +15,24 @@
         <div class="categories-title-wrap">
             <h1 class="categories-title">Kategori</h1>
         </div>
-        <button type="button" class="btn-add" onclick="addCategory()">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 1V13M1 7H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Tambah Kategori
-        </button>
+        <div class="flex items-center gap-3">
+            <div class="view-toggle-wrap">
+                <button type="button" class="view-toggle-btn" data-view-mode="table" title="Tampilan Tabel">
+                    <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18"></path></svg>
+                    <span>Tabel</span>
+                </button>
+                <button type="button" class="view-toggle-btn" data-view-mode="card" title="Tampilan Kartu">
+                    <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+                    <span>Kartu</span>
+                </button>
+            </div>
+            <button type="button" class="btn-add" onclick="addCategory()">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 1V13M1 7H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Tambah Kategori
+            </button>
+        </div>
     </div>
 
     {{-- Pencarian kategori --}}
@@ -34,73 +46,152 @@
         </form>
     </div>
 
-    {{-- Grid kartu kategori --}}
-    <div class="categories-grid">
-        @forelse ($categories as $cat)
-            <article class="category-card" data-id="{{ $cat->id_kategori }}" data-name="{{ $cat->nama_kategori }}" data-links="{{ json_encode($cat->links->pluck('id_link')) }}">
-                {{-- Tombol edit & hapus --}}
-                <div class="category-actions">
-                    <button type="button" class="btn-mini-action btn-mini-edit" title="Edit" onclick="editCategory({{ $cat->id_kategori }}, '{{ $cat->nama_kategori }}', this)">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                    </button>
-                    <form action="{{ route('admin.categories.destroy', $cat->id_kategori) }}" method="POST" onsubmit="event.preventDefault(); confirmDelete(this, 'Apakah Anda yakin ingin menghapus kategori &quot;{{ $cat->nama_kategori }}&quot;?')" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn-mini-action btn-mini-delete" title="Hapus">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                            </svg>
-                        </button>
-                    </form>
+    @if ($categories->isNotEmpty())
+        <div class="view-wrapper">
+            <div class="view-table-container">
+                {{-- Tabel data kategori --}}
+                <div class="table-card mt-8 mb-6">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th class="w-16 pl-8">No</th>
+                                <th>Nama Kategori</th>
+                                <th>Deskripsi</th>
+                                <th class="w-36 text-center">Jumlah Layanan</th>
+                                <th>Layanan Terkait</th>
+                                <th class="w-36 text-center pr-8">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($categories as $index => $cat)
+                                <tr data-links="{{ json_encode($cat->links->pluck('id_link')) }}">
+                                    <td class="pl-8">{{ $index + 1 }}</td>
+                                    <td>
+                                        <span class="font-bold text-[#080d5f]">{{ $cat->nama_kategori }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="text-sm text-gray-500 max-w-sm truncate" title="Kategori {{ $cat->nama_kategori }} menyediakan berbagai layanan yang mendukung proses operasional dan layanan digital di lingkungan Politeknik Negeri Batam.">
+                                            Kategori {{ $cat->nama_kategori }} menyediakan berbagai layanan yang mendukung proses operasional dan layanan digital di lingkungan Politeknik Negeri Batam.
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="category-badge">{{ $cat->links_count }} Layanan</span>
+                                    </td>
+                                    <td>
+                                        @if($cat->links->isNotEmpty())
+                                            <div class="flex flex-wrap gap-1.5 max-w-[200px]">
+                                                @foreach($cat->links->take(2) as $link)
+                                                    <span class="badge-tag">{{ $link->nama_web }}</span>
+                                                @endforeach
+                                                @if($cat->links->count() > 2)
+                                                    <span class="text-gray-400 text-[10px] font-semibold">+{{ $cat->links->count() - 2 }} lainnya</span>
+                                                @endif
+                                            </div>
+                                        @else
+                                            <span class="text-gray-300 text-[11px] italic">Tidak ada layanan</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center pr-8">
+                                        <div class="action-btns justify-center items-center">
+                                            <button type="button" class="btn-action btn-edit shadow-sm" title="Edit" onclick="editCategory({{ $cat->id_kategori }}, '{{ $cat->nama_kategori }}', this)">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                                </svg>
+                                            </button>
+                                            <form action="{{ route('admin.categories.destroy', $cat->id_kategori) }}" method="POST" onsubmit="event.preventDefault(); confirmDelete(this, 'Apakah Anda yakin ingin menghapus kategori &quot;{{ $cat->nama_kategori }}&quot;?')" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn-action btn-delete shadow-sm" title="Hapus">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-
-                {{-- Ikon kategori --}}
-                <div class="category-icon-box">
-                    @if (str_contains(strtolower($cat->nama_kategori), 'akadem'))
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                        </svg>
-                    @else
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                        </svg>
-                    @endif
-                </div>
-
-                <h2 class="category-name">{{ $cat->nama_kategori }}</h2>
-                <p class="category-desc">
-                    Kategori {{ $cat->nama_kategori }} menyediakan berbagai layanan yang mendukung proses operasional dan layanan digital di lingkungan Politeknik Negeri Batam.
-                </p>
-
-                <div class="service-badge">
-                    {{ $cat->links_count }} Layanan
-                </div>
-
-                {{-- Preview layanan terkait --}}
-                @if($cat->links->isNotEmpty())
-                <div class="category-links-preview">
-                    <span class="preview-title">Layanan Terkait:</span>
-                    <ul class="preview-list">
-                        @foreach($cat->links->take(3) as $link)
-                            <li class="preview-item">{{ $link->nama_web }}</li>
-                        @endforeach
-                        @if($cat->links->count() > 3)
-                            <li class="preview-more">+{{ $cat->links->count() - 3 }} lainnya</li>
-                        @endif
-                    </ul>
-                </div>
-                @endif
-            </article>
-        @empty
-            <div class="empty-state">
-                <p>Tidak ada kategori ditemukan.</p>
             </div>
-        @endforelse
-    </div>
+            <div class="view-card-container">
+                {{-- Grid kartu kategori --}}
+                <div class="categories-grid mb-6">
+                    @foreach ($categories as $cat)
+                        <article class="category-card" data-id="{{ $cat->id_kategori }}" data-name="{{ $cat->nama_kategori }}" data-links="{{ json_encode($cat->links->pluck('id_link')) }}">
+                            {{-- Tombol edit & hapus --}}
+                            <div class="category-actions">
+                                <button type="button" class="btn-mini-action btn-mini-edit" title="Edit" onclick="editCategory({{ $cat->id_kategori }}, '{{ $cat->nama_kategori }}', this)">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                </button>
+                                <form action="{{ route('admin.categories.destroy', $cat->id_kategori) }}" method="POST" onsubmit="event.preventDefault(); confirmDelete(this, 'Apakah Anda yakin ingin menghapus kategori &quot;{{ $cat->nama_kategori }}&quot;?')" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn-mini-action btn-mini-delete" title="Hapus">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+
+                            {{-- Ikon kategori --}}
+                            <div class="category-icon-box">
+                                @if (str_contains(strtolower($cat->nama_kategori), 'akadem'))
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                                    </svg>
+                                @else
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                                    </svg>
+                                @endif
+                            </div>
+
+                            <h2 class="category-name">{{ $cat->nama_kategori }}</h2>
+                            <p class="category-desc">
+                                Kategori {{ $cat->nama_kategori }} menyediakan berbagai layanan yang mendukung proses operasional dan layanan digital di lingkungan Politeknik Negeri Batam.
+                            </p>
+
+                            <div class="service-badge">
+                                {{ $cat->links_count }} Layanan
+                            </div>
+
+                            {{-- Preview layanan terkait --}}
+                            @if($cat->links->isNotEmpty())
+                            <div class="category-links-preview">
+                                <span class="preview-title">Layanan Terkait:</span>
+                                <ul class="preview-list">
+                                    @foreach($cat->links->take(3) as $link)
+                                        <li class="preview-item">{{ $link->nama_web }}</li>
+                                    @endforeach
+                                    @if($cat->links->count() > 3)
+                                        <li class="preview-more">+{{ $cat->links->count() - 3 }} lainnya</li>
+                                    @endif
+                                </ul>
+                            </div>
+                            @endif
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+        <div class="mb-12">
+            {{ $categories->links('partials.pagination') }}
+        </div>
+    @else
+        <div class="table-card p-12 text-center opacity-50 mt-10">
+            Tidak ada kategori ditemukan.
+        </div>
+    @endif
 
     @push('modals')
     {{-- ═══════════════════════════════════════════════════════
@@ -177,8 +268,8 @@
             document.getElementById('categoryForm').action = "/admin/categories/" + id;
             document.getElementById('methodField').innerHTML = '@method("PUT")';
             document.getElementById('nama_kategori').value = name;
-            const card = btn.closest('.category-card');
-            const linkedIds = JSON.parse(card.dataset.links || '[]');
+            const container = btn.closest('[data-links]');
+            const linkedIds = JSON.parse(container ? container.dataset.links : '[]');
             document.querySelectorAll('.link-checkbox').forEach(cb => {
                 cb.checked = linkedIds.includes(parseInt(cb.value));
                 toggleLinkHighlight(cb.parentElement);
@@ -201,5 +292,9 @@
         window.onclick = function(event) {
             if (event.target == document.getElementById('categoryModal')) closeModal();
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeViewModeToggle('categories');
+        });
     </script>
 @endsection

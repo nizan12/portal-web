@@ -24,7 +24,8 @@ class LinkController extends Controller
                     ->orWhere('deskripsi', 'like', $keyword);
             })
             ->orderBy('nama_web')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         $categories = Kategori::query()->whereNull('nik')->orderBy('nama_kategori')->get();
         $allTags = Tag::orderBy('nama_tag')->get();

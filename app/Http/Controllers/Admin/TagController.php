@@ -21,7 +21,8 @@ class TagController extends Controller
                 $query->where('nama_tag', 'like', $keyword);
             })
             ->orderBy('nama_tag')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         $menuItems = $this->adminMenuItems('tags');
         $pageTitle = 'Kelola Tag - ' . config('app.name', 'POLTREE');

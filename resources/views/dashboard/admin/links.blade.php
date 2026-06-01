@@ -13,9 +13,19 @@
     <div class="links-header">
         <div class="links-title-wrap">
             <h1 class="links-title">Kelola Layanan</h1>
-            <span class="links-subtitle">{{ $links->count() }} Layanan Terdaftar</span>
+            <span class="links-subtitle">{{ $links->total() }} Layanan Terdaftar</span>
         </div>
-        <div class="flex gap-3">
+        <div class="flex gap-3 items-center">
+            <div class="view-toggle-wrap">
+                <button type="button" class="view-toggle-btn" data-view-mode="table" title="Tampilan Tabel">
+                    <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18"></path></svg>
+                    <span>Tabel</span>
+                </button>
+                <button type="button" class="view-toggle-btn" data-view-mode="card" title="Tampilan Kartu">
+                    <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+                    <span>Kartu</span>
+                </button>
+            </div>
             <form action="{{ route('admin.links.check') }}" method="POST">
                 @csrf
                 <button type="submit" class="btn-check-status">
@@ -48,87 +58,157 @@
     </div>
 
     @if ($links->isNotEmpty())
-        <div class="table-card mt-8">
-            <table class="admin-table">
-                <thead>
-                    <tr>
-                        <th class="pl-8">Layanan</th>
-                        <th>Status</th>
-                        <th>Status Link</th>
-                        <th>Kategori</th>
-                        <th>Tag</th>
-                        <th>Terakhir Dicek</th>
-                        <th class="w-[120px] text-center pr-8">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
+        <div class="view-wrapper">
+            <div class="view-table-container">
+                <div class="table-card mt-8 mb-6">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th class="pl-8">Layanan</th>
+                                <th>Status</th>
+                                <th>Status Link</th>
+                                <th>Kategori</th>
+                                <th>Tag</th>
+                                <th>Terakhir Dicek</th>
+                                <th class="w-[120px] text-center pr-8">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($links as $link)
+                                <tr>
+                                    <td class="pl-8">
+                                        <div class="flex flex-col">
+                                            <span class="font-bold text-[14px] text-[#080d5f] mb-1">{{ $link->nama_web }}</span>
+                                            <a href="{{ $link->normalized_url }}" target="_blank" class="text-[10px] text-blue-400 flex items-center gap-1 group">
+                                                {{ Str::limit(str_replace(['http://', 'https://'], '', $link->url), 30) }}
+                                                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="opacity-0 group-hover:opacity-100 transition-opacity">
+                                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                                    <polyline points="15 3 21 3 21 9"></polyline>
+                                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                                </svg>
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @php $statusClass = $link->resolved_status === 'aktif' ? 'status-active' : 'status-inactive'; @endphp
+                                        <span class="status-badge {{ $statusClass }}">
+                                            <span class="w-1.5 h-1.5 rounded-full {{ $link->resolved_status === 'aktif' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]' }}"></span>
+                                            {{ ucfirst($link->resolved_status) }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {{-- Status Link (API Check) --}}
+                                        @if(!$link->status_checked_at)
+                                            <span class="status-badge bg-gray-50 text-gray-400 border border-gray-200/50 flex items-center w-max px-2.5 py-1 rounded-full text-[10px] font-bold">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+                                                Belum Dicek
+                                            </span>
+                                        @elseif($link->status_link === 'aktif')
+                                            <span class="status-badge bg-emerald-50 text-emerald-700 border border-emerald-100/60 flex items-center w-max px-2.5 py-1 rounded-full text-[10px] font-bold" title="{{ $link->status_summary }}">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] animate-pulse"></span>
+                                                Online
+                                            </span>
+                                        @elseif($link->status_link === 'bermasalah')
+                                            <span class="status-badge bg-rose-50 text-rose-700 border border-rose-100/60 flex items-center w-max px-2.5 py-1 rounded-full text-[10px] font-bold" title="{{ $link->status_summary }}">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]"></span>
+                                                Offline
+                                            </span>
+                                        @else
+                                            <span class="status-badge bg-gray-50 text-gray-500 border border-gray-200/50 flex items-center w-max px-2.5 py-1 rounded-full text-[10px] font-bold">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
+                                                {{ ucfirst($link->status_link) }}
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td><span class="badge-kategori">{{ $link->kategori?->nama_kategori ?: 'Umum' }}</span></td>
+                                    <td>
+                                        <div class="flex flex-wrap gap-1.5 max-w-[150px]">
+                                            @forelse($link->tags as $tag)
+                                                <span class="badge-tag">{{ $tag->nama_tag }}</span>
+                                            @empty
+                                                <span class="text-gray-300 text-[10px] italic">No Tags</span>
+                                            @endforelse
+                                        </div>
+                                    </td>
+                                    <td class="text-[11px] text-gray-500">
+                                        <div class="flex flex-col">
+                                            <span>{{ $link->status_checked_at ? $link->status_checked_at->diffForHumans() : '-' }}</span>
+                                            @if($link->status_checked_at)
+                                                <span class="text-[9px] opacity-60">{{ $link->status_checked_at->format('d M Y, H:i') }}</span>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    <td class="pr-8">
+                                        <div class="action-btns justify-center items-center">
+                                            <button type="button" class="btn-action btn-edit" onclick="editLink({{ json_encode([
+                                                'id' => $link->id_link,
+                                                'nama_web' => $link->nama_web,
+                                                'url' => $link->url,
+                                                'deskripsi' => $link->deskripsi,
+                                                'id_kategori' => $link->id_kategori,
+                                                'tag_ids' => $link->tags->pluck('id_tag')->toArray(),
+                                                'status' => $link->status
+                                            ]) }})">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                            </button>
+                                            <form action="{{ route('admin.links.destroy', $link->id_link) }}" method="POST" onsubmit="event.preventDefault(); confirmDelete(this, 'Apakah Anda yakin ingin menghapus layanan &quot;{{ $link->nama_web }}&quot;?')" class="inline">
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="btn-action btn-delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="view-card-container">
+                {{-- Card View --}}
+                <div class="links-grid mb-6">
                     @foreach ($links as $link)
-                        <tr>
-                            <td class="pl-8">
-                                <div class="flex flex-col">
-                                    <span class="font-bold text-[14px] text-[#080d5f] mb-1">{{ $link->nama_web }}</span>
-                                    <a href="{{ $link->normalized_url }}" target="_blank" class="text-[10px] text-blue-400 flex items-center gap-1 group">
-                                        {{ Str::limit(str_replace(['http://', 'https://'], '', $link->url), 30) }}
-                                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                            <polyline points="15 3 21 3 21 9"></polyline>
-                                            <line x1="10" y1="14" x2="21" y2="3"></line>
-                                        </svg>
-                                    </a>
+                        <div class="link-card">
+                            <div class="link-card-header">
+                                <div class="link-card-icon-box">
+                                    <img src="{{ asset('images/logo-polibatam.png') }}" alt="Logo" style="width: 24px; height: 24px; object-fit: contain;">
                                 </div>
-                            </td>
-                            <td>
-                                @php $statusClass = $link->resolved_status === 'aktif' ? 'status-active' : 'status-inactive'; @endphp
-                                <span class="status-badge {{ $statusClass }}">
-                                    <span class="w-1.5 h-1.5 rounded-full {{ $link->resolved_status === 'aktif' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]' }}"></span>
-                                    {{ ucfirst($link->resolved_status) }}
-                                </span>
-                            </td>
-                            <td>
-                                {{-- Status Link (API Check) --}}
-                                @if(!$link->status_checked_at)
-                                    <span class="status-badge bg-gray-50 text-gray-400 border border-gray-200/50 flex items-center w-max px-2.5 py-1 rounded-full text-[10px] font-bold">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
-                                        Belum Dicek
-                                    </span>
-                                @elseif($link->status_link === 'aktif')
-                                    <span class="status-badge bg-emerald-50 text-emerald-700 border border-emerald-100/60 flex items-center w-max px-2.5 py-1 rounded-full text-[10px] font-bold" title="{{ $link->status_summary }}">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] animate-pulse"></span>
-                                        Online
-                                    </span>
-                                @elseif($link->status_link === 'bermasalah')
-                                    <span class="status-badge bg-rose-50 text-rose-700 border border-rose-100/60 flex items-center w-max px-2.5 py-1 rounded-full text-[10px] font-bold" title="{{ $link->status_summary }}">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]"></span>
-                                        Offline
-                                    </span>
-                                @else
-                                    <span class="status-badge bg-gray-50 text-gray-500 border border-gray-200/50 flex items-center w-max px-2.5 py-1 rounded-full text-[10px] font-bold">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>
-                                        {{ ucfirst($link->status_link) }}
-                                    </span>
+                                <div class="link-card-title-wrap">
+                                    <h3 class="link-card-title" title="{{ $link->nama_web }}">{{ $link->nama_web }}</h3>
+                                    <a href="{{ $link->normalized_url }}" target="_blank" class="link-card-url" title="{{ $link->url }}">{{ $link->url }}</a>
+                                </div>
+                            </div>
+                            <p class="link-card-desc">{{ $link->deskripsi ?: 'Tidak ada deskripsi.' }}</p>
+                            <div class="link-card-meta">
+                                <span class="category-badge">{{ $link->kategori?->nama_kategori ?: 'Umum' }}</span>
+                                @if($link->tags->isNotEmpty())
+                                    <div class="link-card-tags">
+                                        @foreach($link->tags as $t)
+                                            <span class="tag-badge">{{ $t->nama_tag }}</span>
+                                        @endforeach
+                                    </div>
                                 @endif
-                            </td>
-                            <td><span class="badge-kategori">{{ $link->kategori?->nama_kategori ?: 'Umum' }}</span></td>
-                            <td>
-                                <div class="flex flex-wrap gap-1.5 max-w-[150px]">
-                                    @forelse($link->tags as $tag)
-                                        <span class="badge-tag">{{ $tag->nama_tag }}</span>
-                                    @empty
-                                        <span class="text-gray-300 text-[10px] italic">No Tags</span>
-                                    @endforelse
+                            </div>
+                            <div class="link-card-footer">
+                                <div class="link-card-status">
+                                    @php
+                                        $isOnline = $link->status_link === 'aktif';
+                                        $isBermasalah = $link->status_link === 'bermasalah';
+                                    @endphp
+                                    <span class="status-dot {{ !$link->status_checked_at ? 'bg-gray-300' : ($isOnline ? '' : ($isBermasalah ? 'offline' : 'bg-gray-400')) }}"></span>
+                                    <span class="status-text {{ !$link->status_checked_at ? 'text-gray-400' : ($isOnline ? 'text-green-600' : ($isBermasalah ? 'text-red-600' : 'text-gray-500')) }}">
+                                        @if(!$link->status_checked_at)
+                                            Belum dicek
+                                        @elseif($isOnline)
+                                            Online
+                                        @elseif($isBermasalah)
+                                            Offline
+                                        @else
+                                            {{ ucfirst($link->status_link) }}
+                                        @endif
+                                    </span>
                                 </div>
-                            </td>
-                            <td class="text-[11px] text-gray-500">
-                                <div class="flex flex-col">
-                                    <span>{{ $link->status_checked_at ? $link->status_checked_at->diffForHumans() : '-' }}</span>
-                                    @if($link->status_checked_at)
-                                        <span class="text-[9px] opacity-60">{{ $link->status_checked_at->format('d M Y, H:i') }}</span>
-                                    @endif
-                                </div>
-                            </td>
-                            <td class="pr-8">
-                                <div class="action-btns justify-center items-center">
-                                    <button type="button" class="btn-action btn-edit" onclick="editLink({{ json_encode([
+                                <div class="link-card-actions">
+                                    <button type="button" class="btn-mini-action btn-mini-edit" title="Edit" onclick="editLink({{ json_encode([
                                         'id' => $link->id_link,
                                         'nama_web' => $link->nama_web,
                                         'url' => $link->url,
@@ -141,18 +221,23 @@
                                     </button>
                                     <form action="{{ route('admin.links.destroy', $link->id_link) }}" method="POST" onsubmit="event.preventDefault(); confirmDelete(this, 'Apakah Anda yakin ingin menghapus layanan &quot;{{ $link->nama_web }}&quot;?')" class="inline">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="btn-action btn-delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                                        <button type="submit" class="btn-mini-action btn-mini-delete" title="Hapus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
                                     </form>
                                 </div>
-                            </td>
-                        </tr>
+                            </div>
+                        </div>
                     @endforeach
-                </tbody>
-            </table>
+                </div>
+            </div>
+        </div>
+        <div class="mb-12">
+            {{ $links->links('partials.pagination') }}
         </div>
     @else
         <div class="table-card p-12 text-center opacity-50 mt-8">Tidak ada layanan ditemukan.</div>
     @endif
+
+
 
     @push('modals')
     {{-- ═══════════════════════════════════════════════════════
@@ -288,5 +373,9 @@
         window.onclick = function(event) {
             if (event.target == document.getElementById('linkModal')) closeModal();
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeViewModeToggle('links');
+        });
     </script>
 @endsection

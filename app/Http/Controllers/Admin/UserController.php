@@ -23,7 +23,8 @@ class UserController extends Controller
                     ->orWhere('jabatan', 'like', $keyword);
             })
             ->orderBy('nama_user')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         $menuItems = $this->adminMenuItems('users');
         $pageTitle = 'Kelola Pengguna - ' . config('app.name', 'POLTREE');

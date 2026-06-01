@@ -22,7 +22,8 @@ class CategoryController extends Controller
                 $query->where('nama_kategori', 'like', $keyword);
             })
             ->orderBy('nama_kategori')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         $menuItems = $this->adminMenuItems('categories');
         $pageTitle = 'Kelola Kategori - ' . config('app.name', 'POLTREE');

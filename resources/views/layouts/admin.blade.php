@@ -106,10 +106,13 @@
                 <div class="admin-topbar-title">{{ $topbarTitle ?? 'Dashboard' }}</div>
 
                 @php $profileIconAsset = $resolveIconAsset('profile'); @endphp
-                <div class="profile-menu-wrap">
+                <div class="profile-menu-wrap" style="display: flex; align-items: center; gap: 16px;">
+                    <span style="font-size: 13.5px; font-weight: 600; color: #1e2243; font-family: 'Poppins', sans-serif; margin-right: 8px;">
+                        {{ auth('admin')->user()->nama }}
+                    </span>
                     <button type="button" class="admin-profile-button" aria-label="Profil admin" data-profile-toggle style="padding: 0; overflow: hidden; display: grid; place-items: center;">
                         @if(auth('admin')->user()->foto)
-                            <img src="{{ asset(auth('admin')->user()->foto) }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                            <img src="{{ asset(auth('admin')->user()->foto) }}" style="width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 50%;">
                         @else
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width: 20px; height: 20px; color: var(--navy);">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2m8-10a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" />
@@ -118,7 +121,7 @@
                     </button>
 
                     {{-- Panel profil dropdown --}}
-                    <div class="profile-panel" data-profile-panel hidden>
+                    <div class="profile-panel" data-profile-panel hidden style="right: 0; left: auto;">
                         <div class="profile-panel-actions">
                             <button type="button" class="profile-panel-btn" onclick="openProfileModal()">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
@@ -581,6 +584,43 @@
                     toast.remove();
                 }, 400);
             }, 4000);
+        };
+
+        // Global View Mode Toggle Handler
+        window.initializeViewModeToggle = function(pageKey) {
+            const wrapper = document.querySelector('.view-wrapper');
+            if (!wrapper) return;
+            
+            // Get stored preference (default: table)
+            const savedMode = localStorage.getItem(`poltree_view_mode_${pageKey}`) || 'table';
+            
+            // Apply saved mode
+            wrapper.classList.remove('view-mode-table', 'view-mode-card');
+            wrapper.classList.add(`view-mode-${savedMode}`);
+            
+            // Update active state of buttons
+            document.querySelectorAll('.view-toggle-btn').forEach(btn => {
+                const mode = btn.getAttribute('data-view-mode');
+                if (mode === savedMode) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+                
+                // Add click listener
+                btn.addEventListener('click', function() {
+                    const selectedMode = this.getAttribute('data-view-mode');
+                    localStorage.setItem(`poltree_view_mode_${pageKey}`, selectedMode);
+                    
+                    wrapper.classList.remove('view-mode-table', 'view-mode-card');
+                    wrapper.classList.add(`view-mode-${selectedMode}`);
+                    
+                    document.querySelectorAll('.view-toggle-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                });
+            });
         };
     </script>
     @stack('modals')
