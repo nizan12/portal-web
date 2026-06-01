@@ -277,7 +277,7 @@
                         <div class="premium-modal-form-group">
                             <div class="flex justify-between items-center mb-2">
                                 <label class="premium-modal-label" style="margin-bottom: 0;">Kategori</label>
-                                <button type="button" onclick="toggleQuickCategoryForm()" class="text-[11px] font-bold flex items-center gap-1 cursor-pointer" style="background: none; border: none; padding: 0; color: var(--orange);">
+                                <button type="button" onclick="toggleQuickCategoryForm()" class="cb-add-link-btn" style="background: none; border: none; padding: 0; color: var(--orange);">
                                     + Tambah Kategori Baru
                                 </button>
                             </div>
