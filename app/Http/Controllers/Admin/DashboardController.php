@@ -8,12 +8,18 @@ use App\Models\Link;
 use App\Models\Pengguna;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function admin()
     {
         $admin = auth('admin')->user();
+
+        // ── A. Memanggil Stored Procedure & Aggregates ──────────────────────
+        // Menjalankan Stored Procedure untuk mengambil data statistik dashboard
+        DB::statement("CALL sp_get_dashboard_statistics(@total_links, @active_links, @avg_response_time, @most_active_category)");
+        $procResults = DB::select("SELECT @total_links AS total_links, @active_links AS active_links, @avg_response_time AS avg_response_time, @most_active_category AS most_active_category")[0];
 
         $stats = [
             [
@@ -23,7 +29,7 @@ class DashboardController extends Controller
             ],
             [
                 'label' => 'Jumlah Layanan',
-                'value' => $this->formatAdminStat(rescue(fn() => Link::count(), 0, report: false)),
+                'value' => $this->formatAdminStat($procResults->total_links ?? 0),
                 'icon' => 'link',
             ],
             [
@@ -35,7 +41,7 @@ class DashboardController extends Controller
 
         // Statistik Tambahan Lengkap
         $totalPengguna = Pengguna::count();
-        $totalLayanan = Link::count();
+        $totalLayanan = $procResults->total_links ?? 0;
         $totalKategori = Kategori::count();
 
         // 1. Publik vs Pribadi
@@ -43,18 +49,23 @@ class DashboardController extends Controller
         $layananPribadi = Link::whereNotNull('nik')->count();
 
         // 2. Health Status Check
-        $layananAman = Link::where('status_http_code', 200)->count();
+        $layananAman = $procResults->active_links ?? 0;
         $layananDowntime = Link::whereNotNull('status_http_code')->where('status_http_code', '!=', 200)->count();
         $layananBelumDicek = Link::whereNull('status_http_code')->count();
 
-        // 3. Waktu Respon Rata-rata
-        $avgResponseTime = round(Link::whereNotNull('status_response_time_ms')->avg('status_response_time_ms') ?? 0);
+        // 3. Waktu Respon Rata-rata dari Stored Procedure
+        $avgResponseTime = $procResults->avg_response_time ?? 0;
 
         // 4. Layanan Terpopuler (Top Clicked Links)
         $topLinks = Link::orderBy('hit_point', 'desc')->take(5)->get();
 
-        // 5. Kategori Terpopuler
-        $topCategories = Kategori::withCount('links')->orderBy('links_count', 'desc')->take(5)->get();
+        // ── B. Memanggil Stored Function & Subquery Lanjutan ────────────────
+        // Menggunakan Stored Function 'sf_get_category_link_count' untuk menghitung tautan per kategori
+        $topCategories = Kategori::select('*')
+            ->selectRaw('sf_get_category_link_count(id_kategori) AS links_count')
+            ->orderBy('links_count', 'desc')
+            ->take(5)
+            ->get();
 
         $statsDetail = compact(
             'totalPengguna', 'totalLayanan', 'totalKategori',
@@ -62,6 +73,9 @@ class DashboardController extends Controller
             'layananAman', 'layananDowntime', 'layananBelumDicek',
             'avgResponseTime', 'topLinks', 'topCategories'
         );
+
+        // Tambahkan informasi kategori teraktif dari Stored Procedure ke statsDetail
+        $statsDetail['mostActiveCategoryFromProc'] = $procResults->most_active_category ?? 'Tidak Ada';
 
         $menuItems = $this->adminMenuItems('dashboard');
         $pageTitle = 'Dashboard Admin - ' . config('app.name', 'POLTREE');

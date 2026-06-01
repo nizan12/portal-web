@@ -240,6 +240,15 @@
                     <div style="text-align: center; color: #8a8fa5; font-size: 13px; padding: 20px 0;">Kategori belum terdefinisi.</div>
                 @endforelse
             </div>
+
+            <div style="background: #fff8e6; border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; margin-top: 16px; border: 1px solid #ffeeba;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2.5" style="flex-shrink: 0;">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                <span style="font-size: 12px; font-weight: 600; color: #b45309; line-height: 1.4;">
+                    Kategori Teraktif Utama (Hasil Stored Procedure): <strong>{{ $statsDetail['mostActiveCategoryFromProc'] }}</strong>
+                </span>
+            </div>
         </div>
 
     </div>
