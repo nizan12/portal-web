@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Pengguna;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\CheckLinkStatus;
 use App\Models\Kategori;
 use App\Models\Link;
 use App\Models\Tag;
-use App\Services\LinkStatusChecker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -138,7 +138,7 @@ class DashboardController extends Controller
         return view('dashboard.pengguna.index', compact('services', 'adminServices', 'userServices', 'roles', 'activeRole', 'search', 'heroImages', 'categories', 'allLinkTitles', 'categoriesList', 'allAdminTags'));
     }
 
-    public function storeUserLink(Request $request, LinkStatusChecker $checker)
+    public function storeUserLink(Request $request)
     {
         $request->validate([
             'nama_web' => 'required|string|max:255',
@@ -149,7 +149,7 @@ class DashboardController extends Controller
             'tag_ids.*' => 'exists:t_tag,id_tag',
         ]);
 
-        $link = new Link([
+        $link = Link::create([
             'nama_web' => $request->nama_web,
             'url' => $request->url,
             'deskripsi' => $request->deskripsi,
@@ -158,18 +158,17 @@ class DashboardController extends Controller
             'status' => 'aktif',
         ]);
 
-        $statusData = $checker->check($link);
-        $link->fill($statusData);
-        $link->save();
-
         if ($request->has('tag_ids')) {
             $link->tags()->sync($request->tag_ids);
         }
 
+        // Jalankan health check di background agar tidak blocking
+        CheckLinkStatus::dispatch($link->id_link);
+
         return back()->with('success', 'Link kustom berhasil ditambahkan.');
     }
 
-    public function updateUserLink(Request $request, $id, LinkStatusChecker $checker)
+    public function updateUserLink(Request $request, $id)
     {
         $request->validate([
             'nama_web' => 'required|string|max:255',
@@ -199,9 +198,9 @@ class DashboardController extends Controller
             $link->tags()->detach();
         }
 
+        // Jalankan health check di background jika URL berubah
         if ($oldUrl !== $request->url) {
-            $statusData = $checker->check($link);
-            $link->update($statusData);
+            CheckLinkStatus::dispatch($link->id_link);
         }
 
         return back()->with('success', 'Link kustom berhasil diperbarui.');

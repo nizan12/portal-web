@@ -1,0 +1,138 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class LinkSeeder extends Seeder
+{
+    /**
+     * Seed the t_link table.
+     */
+    public function run(): void
+    {
+        DB::table('t_link')->insert([
+            [
+                'id_link'                => 1,
+                'id_kategori'            => 1,
+                'nik'                    => null,
+                'nama_web'               => 'Beranda Polibatam',
+                'url'                    => 'https://www.polibatam.ac.id/',
+                'deskripsi'              => 'Beranda Utama untuk website polibatam untuk memudahkan dosen untuk mengakses layanan polibatam',
+                'role'                   => 'Dosen',
+                'status'                 => 'aktif',
+                'status_checked_at'      => '2026-05-22 01:29:51',
+                'status_http_code'       => 200,
+                'status_response_time_ms'=> 190,
+                'status_summary'         => 'Website merespons normal (HTTP 200).',
+                'hit_point'              => 120,
+            ],
+            [
+                'id_link'                => 2,
+                'id_kategori'            => 9,
+                'nik'                    => null,
+                'nama_web'               => 'Tentang Polibatam',
+                'url'                    => 'https://www.polibatam.ac.id/tentang-polibatam/',
+                'deskripsi'              => 'Profil kampus',
+                'role'                   => 'Tata Usaha',
+                'status'                 => 'aktif',
+                'status_checked_at'      => '2026-05-22 01:29:51',
+                'status_http_code'       => 200,
+                'status_response_time_ms'=> 181,
+                'status_summary'         => 'Website merespons normal (HTTP 200).',
+                'hit_point'              => 98,
+            ],
+            [
+                'id_link'                => 3,
+                'id_kategori'            => 9,
+                'nik'                    => null,
+                'nama_web'               => 'Alumni',
+                'url'                    => 'https://www.polibatam.ac.id/alumni/',
+                'deskripsi'              => 'Portal Alumni',
+                'role'                   => 'Laboran',
+                'status'                 => 'aktif',
+                'status_checked_at'      => '2026-05-22 01:29:51',
+                'status_http_code'       => 200,
+                'status_response_time_ms'=> 172,
+                'status_summary'         => 'Website merespons normal (HTTP 200).',
+                'hit_point'              => 766,
+            ],
+            [
+                'id_link'                => 4,
+                'id_kategori'            => 1,
+                'nik'                    => null,
+                'nama_web'               => 'PBL Expo Polibatam',
+                'url'                    => 'https://pbl.polibatam.ac.id/expo/',
+                'deskripsi'              => 'PBL Expo',
+                'role'                   => 'Tata Usaha',
+                'status'                 => 'aktif',
+                'status_checked_at'      => '2026-05-22 01:29:52',
+                'status_http_code'       => 200,
+                'status_response_time_ms'=> 149,
+                'status_summary'         => 'Website merespons normal (HTTP 200).',
+                'hit_point'              => 775,
+            ],
+            [
+                'id_link'                => 5,
+                'id_kategori'            => 9,
+                'nik'                    => null,
+                'nama_web'               => 'Staff Polibatam',
+                'url'                    => 'https://www.polibatam.ac.id/staff/',
+                'deskripsi'              => 'Portal Staff',
+                'role'                   => 'Dosen',
+                'status'                 => 'aktif',
+                'status_checked_at'      => '2026-05-22 01:29:52',
+                'status_http_code'       => 200,
+                'status_response_time_ms'=> 195,
+                'status_summary'         => 'Website merespons normal (HTTP 200).',
+                'hit_point'              => 816,
+            ],
+            [
+                'id_link'                => 6,
+                'id_kategori'            => 9,
+                'nik'                    => null,
+                'nama_web'               => 'SAKIP Polibatam',
+                'url'                    => 'https://www.polibatam.ac.id/sakip-polibatam/',
+                'deskripsi'              => 'SAKIP',
+                'role'                   => 'Laboran',
+                'status'                 => 'aktif',
+                'status_checked_at'      => '2026-05-22 01:29:52',
+                'status_http_code'       => 200,
+                'status_response_time_ms'=> 176,
+                'status_summary'         => 'Website merespons normal (HTTP 200).',
+                'hit_point'              => 825,
+            ],
+            [
+                'id_link'                => 7,
+                'id_kategori'            => 9,
+                'nik'                    => null,
+                'nama_web'               => 'SIMPEG',
+                'url'                    => 'https://simpeg.polibatam.ac.id',
+                'deskripsi'              => 'Layanan website Politeknik Negeri Batam yang tersedia di portal POLTREE.',
+                'role'                   => 'Laboran',
+                'status'                 => 'bermasalah',
+                'status_checked_at'      => '2026-05-22 01:29:52',
+                'status_http_code'       => null,
+                'status_response_time_ms'=> 9,
+                'status_summary'         => 'Gagal terhubung ke website: cURL error 6: Could not resolve host: simpeg.polibatam.ac.id',
+                'hit_point'              => 0,
+            ],
+            [
+                'id_link'                => 15,
+                'id_kategori'            => null,
+                'nik'                    => '113103',
+                'nama_web'               => 'youtube',
+                'url'                    => 'https://youtu.be/aSugSGCC12I?si=Nz-vI6sMPwdSoiXO',
+                'deskripsi'              => 'youtube',
+                'role'                   => 'Dosen',
+                'status'                 => 'aktif',
+                'status_checked_at'      => '2026-05-22 01:29:52',
+                'status_http_code'       => 200,
+                'status_response_time_ms'=> 1523,
+                'status_summary'         => 'Website merespons normal (HTTP 200).',
+                'hit_point'              => 0,
+            ],
+        ]);
+    }
+}
