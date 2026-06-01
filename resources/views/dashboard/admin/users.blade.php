@@ -191,8 +191,12 @@
 
     function closeAddModal() {
         const m = document.getElementById('addModal');
-        m.classList.add('hidden');
-        m.classList.remove('flex');
+        if (!m) return;
+        m.classList.add('closing');
+        setTimeout(() => {
+            m.classList.add('hidden');
+            m.classList.remove('flex', 'closing');
+        }, 300);
     }
 
     function openEditModal(nik, nama, email, jabatan) {
@@ -214,8 +218,12 @@
 
     function closeEditModal() {
         const m = document.getElementById('editModal');
-        m.classList.add('hidden');
-        m.classList.remove('flex');
+        if (!m) return;
+        m.classList.add('closing');
+        setTimeout(() => {
+            m.classList.add('hidden');
+            m.classList.remove('flex', 'closing');
+        }, 300);
     }
 
     // Close on outside click

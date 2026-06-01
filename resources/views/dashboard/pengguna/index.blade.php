@@ -23,6 +23,35 @@
     </script>
 </head>
 <body>
+    {{-- Container for premium global toasts --}}
+    <div id="toastContainer" class="toast-container"></div>
+
+    @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                showToast("{{ session('success') }}", 'success');
+            });
+        </script>
+    @endif
+
+    @if ($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                @foreach ($errors->all() as $error)
+                    showToast("{{ $error }}", 'error');
+                @endforeach
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                showToast("{{ session('error') }}", 'error');
+            });
+        </script>
+    @endif
+
     <div class="dashboard-layout">
         {{-- ═══════════════════════════════════════════════════════
             SIDEBAR NAVIGATION
@@ -486,28 +515,41 @@
     </div>
 
     {{-- ═══════════════════════════════════════════════════════
-        MODAL: Konfirmasi Hapus (Global)
+        MODAL: Konfirmasi Hapus (Global - Premium Style)
     ═══════════════════════════════════════════════════════ --}}
-    <div id="confirmDeleteModal" class="confirm-modal hidden">
-        <div class="confirm-modal-card">
-            <div class="confirm-modal-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="8" x2="12" y2="12"></line>
-                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                </svg>
-            </div>
-            <h3 class="confirm-modal-title">Konfirmasi Hapus</h3>
-            <p class="confirm-modal-message" id="confirmDeleteMessage">Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.</p>
-            <div class="confirm-modal-actions">
-                <button type="button" class="confirm-modal-btn btn-confirm-cancel" onclick="closeConfirmModal()">Batal</button>
-                <button type="button" class="confirm-modal-btn btn-confirm-delete" id="confirmDeleteBtn" onclick="executeDelete()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+    <div id="confirmDeleteModal" class="hidden premium-modal-overlay">
+        <div class="premium-modal-shell">
+            <div class="premium-modal-card">
+                <button type="button" onclick="closeConfirmModal()" class="premium-modal-close-btn" aria-label="Tutup">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
-                    Hapus
                 </button>
+                
+                <h2 class="premium-modal-title">Konfirmasi Hapus</h2>
+                
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <div style="width: 56px; height: 56px; margin: 0 auto 16px; border-radius: 50%; background: #fff0ed; display: flex; align-items: center; justify-content: center;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#ff3f0a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 28px; height: 28px;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                    </div>
+                    <p id="confirmDeleteMessage" style="font-size: 14px; color: #555b77; line-height: 1.6; font-weight: 500;">Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.</p>
+                </div>
+                
+                <div class="premium-modal-actions">
+                    <button type="button" class="premium-modal-btn btn-cancel" onclick="closeConfirmModal()">Batal</button>
+                    <button type="button" class="premium-modal-btn btn-save" style="background: #ff3f0a; box-shadow: 0 6px 18px rgba(255, 63, 10, 0.2);" id="confirmDeleteBtn" onclick="executeDelete()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; display: inline-block; vertical-align: middle;">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        <span style="vertical-align: middle;">Hapus</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -526,10 +568,14 @@
         }
 
         function closeConfirmModal() {
-            _pendingDeleteForm = null;
             const modal = document.getElementById('confirmDeleteModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
+            if (!modal) return;
+            modal.classList.add('closing');
+            setTimeout(() => {
+                _pendingDeleteForm = null;
+                modal.classList.add('hidden');
+                modal.classList.remove('flex', 'closing');
+            }, 300);
         }
 
         function executeDelete() {
@@ -538,6 +584,65 @@
             }
             closeConfirmModal();
         }
+
+        /* ── Premium Toast Notification Utility ────────────────── */
+        window.showToast = function(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `premium-toast ${type}`;
+            
+            let icon = '';
+            if (type === 'success') {
+                icon = `
+                    <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                `;
+            } else if (type === 'error') {
+                icon = `
+                    <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                `;
+            } else {
+                icon = `
+                    <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                `;
+            }
+
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <div class="toast-icon-wrap">${icon}</div>
+                    <div class="toast-message">${message}</div>
+                    <button type="button" class="toast-close-btn" onclick="this.parentElement.parentElement.remove()" aria-label="Tutup">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="toast-progress-bar"></div>
+            `;
+
+            container.appendChild(toast);
+
+            // Auto dismiss after 4 seconds
+            setTimeout(() => {
+                toast.classList.add('hide');
+                setTimeout(() => {
+                    toast.remove();
+                }, 400);
+            }, 4000);
+        };
     </script>
 </body>
 </html>

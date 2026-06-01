@@ -3011,3 +3011,227 @@ select.category-builder-link-input { background-image: url("data:image/svg+xml,%
     width: 14px;
     height: 14px;
 }
+
+/* ── Premium Modal Smooth Animations (Fade & Scale) ────────── */
+@keyframes premiumModalFadeIn {
+    from {
+        opacity: 0;
+        background: rgba(10, 17, 84, 0);
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
+    }
+    to {
+        opacity: 1;
+        background: rgba(10, 17, 84, 0.35);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+}
+
+@keyframes premiumModalFadeOut {
+    from {
+        opacity: 1;
+        background: rgba(10, 17, 84, 0.35);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
+    to {
+        opacity: 0;
+        background: rgba(10, 17, 84, 0);
+        backdrop-filter: blur(0px);
+        -webkit-backdrop-filter: blur(0px);
+    }
+}
+
+@keyframes premiumModalScaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.92) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes premiumModalScaleOut {
+    from {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.92) translateY(20px);
+    }
+}
+
+/* Apply opening animations */
+.premium-modal-overlay.flex {
+    animation: premiumModalFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both !important;
+}
+
+.premium-modal-overlay.flex .premium-modal-shell {
+    animation: premiumModalScaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both !important;
+}
+
+/* Apply closing animations */
+.premium-modal-overlay.flex.closing {
+    animation: premiumModalFadeOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) both !important;
+}
+
+.premium-modal-overlay.flex.closing .premium-modal-shell {
+    animation: premiumModalScaleOut 0.3s cubic-bezier(0.16, 1, 0.3, 1) both !important;
+}
+
+/* ── Premium Toast Notification System ────────────────────── */
+.toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    pointer-events: none;
+    max-width: 380px;
+    width: calc(100% - 48px);
+}
+
+.premium-toast {
+    position: relative;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 18px;
+    padding: 16px 20px;
+    box-shadow: 0 16px 36px rgba(10, 17, 114, 0.12);
+    border: 1px solid rgba(10, 17, 114, 0.06);
+    overflow: hidden;
+    pointer-events: auto;
+    animation: toastSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.premium-toast.hide {
+    animation: toastSlideOut 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes toastSlideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(40px) scale(0.95);
+    }
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toast-icon-wrap {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.premium-toast.success .toast-icon-wrap {
+    background: #eefdf3;
+    color: #10b981;
+}
+
+.premium-toast.error .toast-icon-wrap {
+    background: #fff0ed;
+    color: #ff3f0a;
+}
+
+.premium-toast.info .toast-icon-wrap {
+    background: #eff6ff;
+    color: #3b82f6;
+}
+
+.toast-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.toast-message {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1e2243;
+    flex-grow: 1;
+    line-height: 1.4;
+    padding-right: 8px;
+}
+
+.toast-close-btn {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: #8a8fa5;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.toast-close-btn:hover {
+    background: #f1f4fb;
+    color: #1e2243;
+}
+
+.toast-close-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+.toast-progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: var(--navy);
+    width: 100%;
+    animation: toastProgress 4.0s linear both;
+}
+
+.premium-toast.success .toast-progress-bar {
+    background: #10b981;
+}
+
+.premium-toast.error .toast-progress-bar {
+    background: #ff3f0a;
+}
+
+.premium-toast.info .toast-progress-bar {
+    background: #3b82f6;
+}
+
+@keyframes toastProgress {
+    from { width: 100%; }
+    to { width: 0%; }
+}
+
+

@@ -914,6 +914,14 @@ document.addEventListener('DOMContentLoaded', function () {
         syncCustomCategories();
         syncServiceStates();
         closeCategoryBuilder();
+
+        if (typeof showToast === 'function') {
+            if (categoryBuilderState.source === 'edit') {
+                showToast(`Kategori "${newCategoryName}" berhasil diperbarui!`, 'success');
+            } else {
+                showToast(`Kategori "${newCategoryName}" berhasil dibuat!`, 'success');
+            }
+        }
     };
 
     if (shortcutCategoryControls.toggle) {
@@ -1015,6 +1023,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     syncCustomCategories();
                     syncServiceStates();
                     closeCategoryBuilder();
+                    
+                    if (typeof showToast === 'function') {
+                        showToast(`Kategori "${categoryToDelete}" berhasil dihapus.`, 'info');
+                    }
                 }
             } else {
                 resetCategoryBuilderForm();
@@ -1122,6 +1134,10 @@ document.addEventListener('DOMContentLoaded', function () {
             syncCustomCategories();
             syncServiceStates();
             applyShortcutFilter(readShortcutFilter());
+
+            if (typeof showToast === 'function') {
+                showToast(`Layanan berhasil dipindahkan ke Kategori "${categoryName}"!`, 'success');
+            }
         }
 
         // Handle role assignment from card dropdown
@@ -1142,6 +1158,10 @@ document.addEventListener('DOMContentLoaded', function () {
             card.classList.remove('is-active');
 
             syncServiceStates();
+
+            if (typeof showToast === 'function') {
+                showToast(`Akses Peran layanan berhasil diatur ke "${roleName}"!`, 'success');
+            }
         }
 
         // Handle bookmark toggle
@@ -1149,6 +1169,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (bookmarkBtn) {
             const card = bookmarkBtn.closest('.service-card');
             const key = getServiceKey(card);
+            const title = card.dataset.title || 'Layanan';
 
             const storedBookmarks = JSON.parse(localStorage.getItem(bookmarkStorageKey) || '[]');
             const index = storedBookmarks.indexOf(key);
@@ -1167,6 +1188,14 @@ document.addEventListener('DOMContentLoaded', function () {
             
             // Sync with other cards and elements
             syncServiceStates();
+
+            if (typeof showToast === 'function') {
+                if (newlySaved) {
+                    showToast(`"${title}" berhasil ditambahkan ke Tersimpan!`, 'success');
+                } else {
+                    showToast(`"${title}" dihapus dari Tersimpan.`, 'info');
+                }
+            }
         }
 
         // Handle saved shortcut toggle
@@ -1313,6 +1342,10 @@ window.openLinkModal = function(id = '', title = '', url = '', desc = '', role =
 
 window.closeLinkModal = function() {
     const m = document.getElementById('linkModal');
-    m.classList.add('hidden');
-    m.classList.remove('flex');
+    if (!m) return;
+    m.classList.add('closing');
+    setTimeout(() => {
+        m.classList.add('hidden');
+        m.classList.remove('flex', 'closing');
+    }, 300);
 };

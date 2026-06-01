@@ -176,8 +176,12 @@
 
         function closeModal() {
             const m = document.getElementById('categoryModal');
-            m.classList.add('hidden');
-            m.classList.remove('flex');
+            if (!m) return;
+            m.classList.add('closing');
+            setTimeout(() => {
+                m.classList.add('hidden');
+                m.classList.remove('flex', 'closing');
+            }, 300);
         }
 
         window.onclick = function(event) {

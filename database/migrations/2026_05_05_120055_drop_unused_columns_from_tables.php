@@ -27,10 +27,17 @@ return new class extends Migration
                 ->whereNotNull('nik_pengguna')
                 ->update(['nik' => DB::raw('nik_pengguna')]);
             
-            // Drop foreign key and then drop nik_pengguna
+            // Drop foreign key in a separate schema block inside a try-catch
+            try {
+                Schema::table('t_kategori', function (Blueprint $table) {
+                    $table->dropForeign('fk_kategori_pengguna');
+                });
+            } catch (\Exception $e) {
+                // Foreign key might not exist or be named differently
+            }
+
+            // Drop nik_pengguna column
             Schema::table('t_kategori', function (Blueprint $table) {
-                // Check if foreign key exists (standard practice)
-                $table->dropForeign('fk_kategori_pengguna');
                 $table->dropColumn('nik_pengguna');
             });
         }

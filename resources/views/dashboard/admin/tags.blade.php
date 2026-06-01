@@ -204,23 +204,17 @@
 
         function showModal() {
             const m = document.getElementById('tagModal');
-            const c = document.getElementById('modalContent');
             m.classList.remove('hidden');
             m.classList.add('flex');
-            setTimeout(() => {
-                c.classList.remove('scale-95', 'opacity-0');
-                c.classList.add('scale-100', 'opacity-100');
-            }, 10);
         }
 
         function closeModal() {
             const m = document.getElementById('tagModal');
-            const c = document.getElementById('modalContent');
-            c.classList.add('scale-95', 'opacity-0');
-            c.classList.remove('scale-100', 'opacity-100');
+            if (!m) return;
+            m.classList.add('closing');
             setTimeout(() => {
                 m.classList.add('hidden');
-                m.classList.remove('flex');
+                m.classList.remove('flex', 'closing');
             }, 300);
         }
 
