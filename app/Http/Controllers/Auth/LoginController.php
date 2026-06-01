@@ -78,4 +78,122 @@ class LoginController extends Controller
 
         return redirect()->route('login');
     }
+
+    /**
+     * Tampilkan halaman lupa password.
+     */
+    public function showForgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
+
+    /**
+     * Kirim tautan reset password (Simulasi Interaktif).
+     */
+    public function handleForgotPassword(Request $request)
+    {
+        $request->validate([
+            'identity' => ['required', 'string'],
+        ], [
+            'identity.required' => 'NIK atau Email wajib diisi.',
+        ]);
+
+        $identity = $request->identity;
+
+        // Cek Admin (t_admin)
+        $admin = Admin::where('nik_admin', $identity)
+            ->orWhere('email', $identity)
+            ->first();
+
+        if ($admin) {
+            $token = \Illuminate\Support\Str::random(60);
+            session([
+                'reset_token' => $token,
+                'reset_nik' => $admin->nik_admin,
+                'reset_role' => 'admin'
+            ]);
+
+            return back()->with([
+                'status' => 'Data Admin terverifikasi! Tautan reset password aman telah disiapkan.',
+                'reset_token' => $token
+            ]);
+        }
+
+        // Cek Pengguna (t_pengguna)
+        $pengguna = Pengguna::where('nik', $identity)
+            ->orWhere('email', $identity)
+            ->first();
+
+        if ($pengguna) {
+            $token = \Illuminate\Support\Str::random(60);
+            session([
+                'reset_token' => $token,
+                'reset_nik' => $pengguna->nik,
+                'reset_role' => 'pengguna'
+            ]);
+
+            return back()->with([
+                'status' => 'Data Pengguna terverifikasi! Tautan reset password aman telah disiapkan.',
+                'reset_token' => $token
+            ]);
+        }
+
+        return back()->withErrors([
+            'identity' => 'NIK atau Email tidak terdaftar dalam sistem.'
+        ]);
+    }
+
+    /**
+     * Tampilkan halaman atur ulang password.
+     */
+    public function showResetPassword($token)
+    {
+        if (session('reset_token') !== $token) {
+            return redirect()->route('password.request')->withErrors([
+                'identity' => 'Sesi reset password tidak valid atau telah kedaluwarsa.'
+            ]);
+        }
+
+        return view('auth.reset-password', compact('token'));
+    }
+
+    /**
+     * Proses pembaruan kata sandi baru.
+     */
+    public function handleResetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => ['required'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
+        ], [
+            'password.required' => 'Password baru wajib diisi.',
+            'password.min' => 'Password minimal harus 6 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+        ]);
+
+        if (session('reset_token') !== $request->token) {
+            return redirect()->route('password.request')->withErrors([
+                'identity' => 'Sesi reset password tidak valid.'
+            ]);
+        }
+
+        $nik = session('reset_nik');
+        $role = session('reset_role');
+        $newPassword = $request->password;
+
+        if ($role === 'admin') {
+            Admin::where('nik_admin', $nik)->update([
+                'password' => Hash::make($newPassword)
+            ]);
+        } else {
+            Pengguna::where('nik', $nik)->update([
+                'password' => Hash::make($newPassword)
+            ]);
+        }
+
+        // Hapus sesi reset
+        session()->forget(['reset_token', 'reset_nik', 'reset_role']);
+
+        return redirect()->route('login')->with('success', 'Kata sandi Anda berhasil diperbarui! Silakan masuk.');
+    }
 }

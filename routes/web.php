@@ -19,6 +19,12 @@ Route::get('/', function () {
 Route::middleware('guest:admin,pengguna')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store']);
+    
+    // Forgot Password Flow
+    Route::get('/forgot-password', [LoginController::class, 'showForgotPassword'])->name('password.request');
+    Route::post('/forgot-password', [LoginController::class, 'handleForgotPassword'])->name('password.email');
+    Route::get('/reset-password/{token}', [LoginController::class, 'showResetPassword'])->name('password.reset');
+    Route::post('/reset-password', [LoginController::class, 'handleResetPassword'])->name('password.update.post');
 });
 
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
