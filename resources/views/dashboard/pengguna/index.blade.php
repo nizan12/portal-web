@@ -483,7 +483,7 @@
 
                     <div class="premium-modal-form-group">
                         <label class="premium-modal-label">URL Website</label>
-                        <input type="url" name="url" id="linkUrl" placeholder="https://example.com" required class="premium-modal-input">
+                        <input text name="url" id="linkUrl" placeholder="https://example.com" required class="premium-modal-input">
                     </div>
 
                     <input type="hidden" name="role" id="linkRole" value="">

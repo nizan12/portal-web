@@ -153,7 +153,7 @@
 
                     <div class="premium-modal-form-group">
                         <label class="premium-modal-label">URL Layanan</label>
-                        <input type="url" name="url" id="url" placeholder="https://example.com" required class="premium-modal-input">
+                        <input text name="url" id="url" placeholder="https://example.com" required class="premium-modal-input">
                     </div>
 
                     <div class="premium-modal-form-group">
