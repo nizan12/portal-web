@@ -38,17 +38,27 @@ class CategoryController extends Controller
     {
         $request->validate([
             'nama_kategori' => 'required|string|max:255',
+            'icon' => 'nullable|string|max:255',
             'link_ids' => 'nullable|array',
             'link_ids.*' => 'exists:t_link,id_link',
         ]);
 
         $cat = Kategori::create([
             'nama_kategori' => $request->nama_kategori,
+            'icon' => $request->icon,
             'nik' => null, // Global category
         ]);
 
         if ($request->has('link_ids')) {
             Link::whereIn('id_link', $request->link_ids)->update(['id_kategori' => $cat->id_kategori]);
+        }
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori berhasil ditambahkan.',
+                'category' => $cat
+            ]);
         }
 
         return back()->with('success', 'Kategori berhasil ditambahkan.');
@@ -58,6 +68,7 @@ class CategoryController extends Controller
     {
         $request->validate([
             'nama_kategori' => 'required|string|max:255',
+            'icon' => 'nullable|string|max:255',
             'link_ids' => 'nullable|array',
             'link_ids.*' => 'exists:t_link,id_link',
         ]);
@@ -65,6 +76,7 @@ class CategoryController extends Controller
         $category = Kategori::findOrFail($id);
         $category->update([
             'nama_kategori' => $request->nama_kategori,
+            'icon' => $request->icon,
         ]);
 
         // Update links association

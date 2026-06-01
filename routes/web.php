@@ -31,6 +31,12 @@ Route::middleware('auth:pengguna')->group(function () {
         ->name('pengguna.password.update');
     Route::post('/pengguna/links', [PenggunaDashboardController::class, 'storeUserLink'])
         ->name('pengguna.links.store');
+    Route::post('/pengguna/categories', [PenggunaDashboardController::class, 'storeUserCategory'])
+        ->name('pengguna.categories.store');
+    Route::put('/pengguna/categories/{id}', [PenggunaDashboardController::class, 'updateUserCategory'])
+        ->name('pengguna.categories.update');
+    Route::delete('/pengguna/categories/{id}', [PenggunaDashboardController::class, 'deleteUserCategory'])
+        ->name('pengguna.categories.destroy');
     Route::put('/pengguna/links/{id}', [PenggunaDashboardController::class, 'updateUserLink'])
         ->name('pengguna.links.update');
     Route::delete('/pengguna/links/{id}', [PenggunaDashboardController::class, 'deleteUserLink'])

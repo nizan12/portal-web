@@ -15,7 +15,7 @@
             <div class="card-action-group">
                 {{-- Tombol edit link pribadi --}}
                 <button type="button"
-                    onclick="openLinkModal('{{ $service['id'] }}', '{{ $service['title'] }}', '{{ $service['url'] }}', '{{ $service['description'] }}', '{{ $service['role'] ?? '' }}', '{{ json_encode($service['tag_ids'] ?? []) }}')"
+                    onclick="openLinkModal('{{ $service['id'] }}', '{{ $service['title'] }}', '{{ $service['url'] }}', '{{ $service['description'] }}', '{{ $service['role'] ?? '' }}', '{{ json_encode($service['tag_ids'] ?? []) }}', '{{ $service['id_kategori'] ?? '' }}')"
                     class="card-action-btn edit-btn"
                     title="Edit Link">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4L18.5 2.5z"></path></svg>

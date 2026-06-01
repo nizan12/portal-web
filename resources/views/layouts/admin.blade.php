@@ -336,7 +336,7 @@
                             {{ auth('admin')->user()->nama ?? '-' }}
                         </h3>
                         
-                        <div class="profile-edit-only" style="display: none; width: 100%; max-width: 280px; margin: 0 auto 10px;">
+                        <div class="profile-edit-only" style="display: none; flex-direction: column; align-items: stretch; width: 100%; max-width: 280px; margin: 0 auto 10px;">
                             <label class="premium-modal-label" style="text-align: left; font-size: 11px; margin-bottom: 4px;">Nama Lengkap</label>
                             <input type="text" name="nama" value="{{ auth('admin')->user()->nama }}" required class="premium-modal-input" style="width: 100%; text-align: center; font-weight: 700; font-size: 14.5px; height: 38px; border-radius: 10px;">
                         </div>
@@ -607,6 +607,170 @@
                 }, 400);
             }, 4000);
         };
+
+        // ── Premium Custom Select ──
+        window.initPremiumSelect = function (selectEl) {
+            if (!selectEl || selectEl.dataset.premiumSelectInitialized) {
+                return;
+            }
+
+            // Hide original select
+            selectEl.style.display = 'none';
+
+            // Create wrapper
+            const wrapper = document.createElement('div');
+            wrapper.className = 'premium-select-wrapper';
+
+            // Insert wrapper before selectEl
+            selectEl.parentNode.insertBefore(wrapper, selectEl);
+            wrapper.appendChild(selectEl); // move selectEl inside wrapper
+
+            // Create trigger
+            const trigger = document.createElement('div');
+            trigger.className = 'premium-select-trigger';
+            trigger.setAttribute('tabindex', '0');
+
+            const triggerText = document.createElement('span');
+            triggerText.className = 'trigger-text';
+            
+            const currentOption = selectEl.options[selectEl.selectedIndex];
+            triggerText.textContent = currentOption ? currentOption.textContent : 'Pilih...';
+
+            const triggerArrow = document.createElement('span');
+            triggerArrow.className = 'trigger-arrow';
+            triggerArrow.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px;"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+
+            trigger.appendChild(triggerText);
+            trigger.appendChild(triggerArrow);
+            wrapper.appendChild(trigger);
+
+            // Create options container
+            const optionsContainer = document.createElement('div');
+            optionsContainer.className = 'premium-select-options';
+            wrapper.appendChild(optionsContainer);
+
+            // Build option items function
+            const buildOptions = function () {
+                optionsContainer.innerHTML = '';
+                Array.from(selectEl.options).forEach(function (opt, idx) {
+                    const optEl = document.createElement('div');
+                    optEl.className = 'premium-select-option';
+                    if (opt.selected) {
+                        optEl.classList.add('is-selected');
+                    }
+                    optEl.dataset.value = opt.value;
+                    optEl.dataset.index = idx;
+                    
+                    const optText = document.createElement('span');
+                    optText.textContent = opt.textContent;
+                    
+                    const optCheck = document.createElement('span');
+                    optCheck.className = 'option-check';
+                    optCheck.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:12px; height:12px;"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+                    optEl.appendChild(optText);
+                    optEl.appendChild(optCheck);
+
+                    optEl.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        selectEl.selectedIndex = idx;
+                        triggerText.textContent = opt.textContent;
+                        
+                        // Trigger change event on original select
+                        const event = new Event('change', { bubbles: true });
+                        selectEl.dispatchEvent(event);
+                        
+                        closeDropdown();
+                    });
+
+                    optionsContainer.appendChild(optEl);
+                });
+            };
+
+            const toggleDropdown = function () {
+                const isOpen = optionsContainer.classList.contains('is-open');
+                if (isOpen) {
+                    closeDropdown();
+                } else {
+                    openDropdown();
+                }
+            };
+
+            const openDropdown = function () {
+                // Close all other open premium selects first
+                document.querySelectorAll('.premium-select-options.is-open').forEach(function (el) {
+                    if (el !== optionsContainer) {
+                        el.classList.remove('is-open');
+                        el.previousElementSibling.classList.remove('is-active');
+                        // Restore parent scroll container's overflow if needed
+                        const parentScroll = el.closest('.premium-modal-scroll-container');
+                        if (parentScroll) {
+                            parentScroll.style.setProperty('overflow-y', 'auto', 'important');
+                        }
+                    }
+                });
+
+                buildOptions(); // Rebuild options to reflect current selection/state
+                optionsContainer.classList.add('is-open');
+                trigger.classList.add('is-active');
+
+                // Prevent clipping by parent scroll containers
+                const parentScroll = wrapper.closest('.premium-modal-scroll-container');
+                if (parentScroll) {
+                    parentScroll.style.setProperty('overflow-y', 'visible', 'important');
+                }
+            };
+
+            const closeDropdown = function () {
+                optionsContainer.classList.remove('is-open');
+                trigger.classList.remove('is-active');
+
+                // Restore parent scroll container's overflow
+                const parentScroll = wrapper.closest('.premium-modal-scroll-container');
+                if (parentScroll) {
+                    parentScroll.style.setProperty('overflow-y', 'auto', 'important');
+                }
+            };
+
+            trigger.addEventListener('click', function (e) {
+                e.stopPropagation();
+                toggleDropdown();
+            });
+
+            // Focus and keyboard navigation
+            trigger.addEventListener('keydown', function (e) {
+                if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    toggleDropdown();
+                } else if (e.key === 'Escape') {
+                    closeDropdown();
+                }
+            });
+
+            // Close on click outside
+            document.addEventListener('click', function (e) {
+                if (!wrapper.contains(e.target)) {
+                    closeDropdown();
+                }
+            });
+
+            // Mark as initialized
+            selectEl.dataset.premiumSelectInitialized = 'true';
+
+            // Add reference on original select element so we can manually trigger update/refresh
+            selectEl.refreshPremiumSelect = function() {
+                const opt = selectEl.options[selectEl.selectedIndex];
+                triggerText.textContent = opt ? opt.textContent : 'Pilih...';
+            };
+        };
+
+        // Automatically initialize all custom selects on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const selects = document.querySelectorAll('select.premium-modal-input, select.services-select');
+            selects.forEach(function (select) {
+                window.initPremiumSelect(select);
+            });
+        });
 
         // Global View Mode Toggle Handler
         window.initializeViewModeToggle = function(pageKey) {

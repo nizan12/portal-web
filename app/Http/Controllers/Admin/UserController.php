@@ -87,6 +87,9 @@ class UserController extends Controller
                 $namaIndex = array_search('nama_user', $headers);
             }
             $emailIndex = array_search('email', $headers);
+            if ($emailIndex === false) {
+                $emailIndex = array_search('alamat email', $headers);
+            }
             $jabatanIndex = array_search('jabatan', $headers);
             if ($jabatanIndex === false) {
                 $jabatanIndex = array_search('role', $headers);
@@ -162,9 +165,9 @@ class UserController extends Controller
         
         // Set Headers
         $sheet->setCellValue('A1', 'NIK');
-        $sheet->setCellValue('B1', 'Nama');
-        $sheet->setCellValue('C1', 'Email');
-        $sheet->setCellValue('D1', 'Jabatan');
+        $sheet->setCellValue('B1', 'Nama Lengkap');
+        $sheet->setCellValue('C1', 'Alamat Email');
+        $sheet->setCellValue('D1', 'Role');
         $sheet->setCellValue('E1', 'Password');
         
         // Add Example Row 1

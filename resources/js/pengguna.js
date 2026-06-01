@@ -13,6 +13,33 @@ document.addEventListener('DOMContentLoaded', function () {
     const profileToggle = document.querySelector('[data-profile-toggle]');
     const profilePanel = document.querySelector('[data-profile-panel]');
     const profilePlaceholderButtons = Array.from(document.querySelectorAll('[data-profile-placeholder]'));
+
+    const customCategoryIconsKey = 'poltree-custom-category-icons-' + userNik;
+    const readCustomCategoryIcons = function() {
+        try {
+            return JSON.parse(window.localStorage.getItem(customCategoryIconsKey) || '{}');
+        } catch(e) {
+            return {};
+        }
+    };
+    const writeCustomCategoryIcons = function(icons) {
+        window.localStorage.setItem(customCategoryIconsKey, JSON.stringify(icons));
+    };
+
+    const iconPaths = {
+        'home': '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline>',
+        'grid': '<rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>',
+        'sparkles': '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>',
+        'user': '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>',
+        'chain': '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>',
+        'folder': '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>',
+        'tag': '<path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>',
+        'book': '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>',
+        'globe': '<circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>',
+        'settings': '<circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>',
+        'briefcase': '<rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>',
+        'heart': '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>'
+    };
     const modalCategoryControls = null;
     const shortcutCategoryMenu = document.querySelector('[data-shortcut-category-menu]');
     const shortcutCategoryControls = {
@@ -104,6 +131,165 @@ document.addEventListener('DOMContentLoaded', function () {
         // Apply filters based on current tab state
         updateCardVisibilities();
     };
+
+    const initPremiumSelect = function (selectEl) {
+        if (!selectEl || selectEl.dataset.premiumSelectInitialized) {
+            return;
+        }
+
+        // Hide original select
+        selectEl.style.display = 'none';
+
+        // Create wrapper
+        const wrapper = document.createElement('div');
+        wrapper.className = 'premium-select-wrapper';
+        if (selectEl.classList.contains('category-builder-link-input')) {
+            wrapper.classList.add('cb-select-wrapper');
+        }
+
+        // Insert wrapper before selectEl
+        selectEl.parentNode.insertBefore(wrapper, selectEl);
+        wrapper.appendChild(selectEl); // move selectEl inside wrapper
+
+        // Create trigger
+        const trigger = document.createElement('div');
+        trigger.className = 'premium-select-trigger';
+        trigger.setAttribute('tabindex', '0');
+
+        const triggerText = document.createElement('span');
+        triggerText.className = 'trigger-text';
+        
+        const currentOption = selectEl.options[selectEl.selectedIndex];
+        triggerText.textContent = currentOption ? currentOption.textContent : 'Pilih...';
+
+        const triggerArrow = document.createElement('span');
+        triggerArrow.className = 'trigger-arrow';
+        triggerArrow.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px; height:14px;"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+
+        trigger.appendChild(triggerText);
+        trigger.appendChild(triggerArrow);
+        wrapper.appendChild(trigger);
+
+        // Create options container
+        const optionsContainer = document.createElement('div');
+        optionsContainer.className = 'premium-select-options';
+        wrapper.appendChild(optionsContainer);
+
+        // Build option items function
+        const buildOptions = function () {
+            optionsContainer.innerHTML = '';
+            Array.from(selectEl.options).forEach(function (opt, idx) {
+                const optEl = document.createElement('div');
+                optEl.className = 'premium-select-option';
+                if (opt.selected) {
+                    optEl.classList.add('is-selected');
+                }
+                optEl.dataset.value = opt.value;
+                optEl.dataset.index = idx;
+                
+                const optText = document.createElement('span');
+                optText.textContent = opt.textContent;
+                
+                const optCheck = document.createElement('span');
+                optCheck.className = 'option-check';
+                optCheck.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:12px; height:12px;"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+                optEl.appendChild(optText);
+                optEl.appendChild(optCheck);
+
+                optEl.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    selectEl.selectedIndex = idx;
+                    triggerText.textContent = opt.textContent;
+                    
+                    // Trigger change event on original select
+                    const event = new Event('change', { bubbles: true });
+                    selectEl.dispatchEvent(event);
+                    
+                    closeDropdown();
+                });
+
+                optionsContainer.appendChild(optEl);
+            });
+        };
+
+        const toggleDropdown = function () {
+            const isOpen = optionsContainer.classList.contains('is-open');
+            if (isOpen) {
+                closeDropdown();
+            } else {
+                openDropdown();
+            }
+        };
+
+        const openDropdown = function () {
+            // Close all other open premium selects first
+            document.querySelectorAll('.premium-select-options.is-open').forEach(function (el) {
+                if (el !== optionsContainer) {
+                    el.classList.remove('is-open');
+                    el.previousElementSibling.classList.remove('is-active');
+                    // Restore parent scroll container's overflow if needed
+                    const parentScroll = el.closest('.premium-modal-scroll-container');
+                    if (parentScroll) {
+                        parentScroll.style.setProperty('overflow-y', 'auto', 'important');
+                    }
+                }
+            });
+
+            buildOptions(); // Rebuild options to reflect current selection/state
+            optionsContainer.classList.add('is-open');
+            trigger.classList.add('is-active');
+
+            // Prevent clipping by parent scroll containers
+            const parentScroll = wrapper.closest('.premium-modal-scroll-container');
+            if (parentScroll) {
+                parentScroll.style.setProperty('overflow-y', 'visible', 'important');
+            }
+        };
+
+        const closeDropdown = function () {
+            optionsContainer.classList.remove('is-open');
+            trigger.classList.remove('is-active');
+
+            // Restore parent scroll container's overflow
+            const parentScroll = wrapper.closest('.premium-modal-scroll-container');
+            if (parentScroll) {
+                parentScroll.style.setProperty('overflow-y', 'auto', 'important');
+            }
+        };
+
+        trigger.addEventListener('click', function (e) {
+            e.stopPropagation();
+            toggleDropdown();
+        });
+
+        // Focus and keyboard navigation
+        trigger.addEventListener('keydown', function (e) {
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                toggleDropdown();
+            } else if (e.key === 'Escape') {
+                closeDropdown();
+            }
+        });
+
+        // Close on click outside
+        document.addEventListener('click', function (e) {
+            if (!wrapper.contains(e.target)) {
+                closeDropdown();
+            }
+        });
+
+        // Mark as initialized
+        selectEl.dataset.premiumSelectInitialized = 'true';
+
+        // Add reference on original select element so we can manually trigger update/refresh
+        selectEl.refreshPremiumSelect = function() {
+            const opt = selectEl.options[selectEl.selectedIndex];
+            triggerText.textContent = opt ? opt.textContent : 'Pilih...';
+        };
+    };
+    window.initPremiumSelect = initPremiumSelect;
 
     if (tabSemuaBtn) {
         tabSemuaBtn.addEventListener('click', function () {
@@ -348,7 +534,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const updateBodyLock = function () {
-        const hasOpenCategoryBuilder = categoryBuilder.modal ? categoryBuilder.modal.classList.contains('is-open') : false;
+        const hasOpenCategoryBuilder = categoryBuilder.modal ? categoryBuilder.modal.classList.contains('flex') : false;
         const hasOpenLinkModal = document.getElementById('linkModal')?.classList.contains('flex');
         const hasOpenPasswordModal = document.getElementById('passwordModal')?.classList.contains('flex');
         const hasOpenProfileModal = document.getElementById('profileModal')?.classList.contains('flex');
@@ -445,48 +631,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 
                 const totalLinks = matchedCards.length;
-                const displayLinks = matchedCards.slice(0, 4);
                 
-                let subIconsHtml = '';
-                displayLinks.forEach(function (card, idx) {
-                    if (idx === 3 && totalLinks > 4) {
-                        subIconsHtml += `
-                            <div class="folder-sub-icon overflow-badge">
-                                <span>+${totalLinks - 3}</span>
-                            </div>
-                        `;
-                    } else {
-                        const title = card.dataset.title || '';
-                        const url = card.dataset.url || '';
-                        const isPolibatam = title.toLowerCase().includes('polibatam') || url.toLowerCase().includes('polibatam');
-                        
-                        if (isPolibatam) {
-                            subIconsHtml += `
-                                <div class="folder-sub-icon">
-                                    <img src="/images/logo-polibatam.png" alt="Logo" class="sub-icon-img">
-                                </div>
-                            `;
-                        } else {
-                            // Calculate initials
-                            let initials = '';
-                            const words = title.replace(/[^a-zA-Z0-9\s]/g, '').split(' ').filter(Boolean);
-                            if (words.length >= 2) {
-                                initials = (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
-                            } else {
-                                initials = title.substring(0, 2).toUpperCase();
-                            }
-                            
-                            subIconsHtml += `
-                                <div class="folder-sub-icon">
-                                    <span class="sub-icon-text">${initials}</span>
-                                </div>
-                            `;
-                        }
-                    }
-                });
+                // Get the saved custom category icon
+                const customCategoryIcons = readCustomCategoryIcons();
+                const iconValue = customCategoryIcons[categoryName] || '';
                 
-                for (let i = totalLinks; i < 4; i++) {
-                    subIconsHtml += '<div class="folder-sub-icon empty-slot"></div>';
+                let headerInnerHtml = '';
+                if (iconValue && iconPaths[iconValue]) {
+                    headerInnerHtml = `
+                        <div class="category-folder-icon-wrapper" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; background: rgba(8, 13, 95, 0.04); color: #080d5f; transition: all 0.2s;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                ${iconPaths[iconValue]}
+                            </svg>
+                        </div>
+                    `;
+                } else {
+                    headerInnerHtml = `
+                        <div class="category-folder-icon-wrapper" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; background: rgba(8, 13, 95, 0.04); color: #080d5f; transition: all 0.2s;">
+                            <img src="/images/logo-polibatam.png" alt="Logo" style="width: 32px; height: 32px; object-fit: contain;">
+                        </div>
+                    `;
                 }
                 
                 const folderCard = document.createElement('div');
@@ -500,9 +664,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </svg>
                     </button>
                     <div class="folder-header">
-                        <div class="folder-icon-grid">
-                            ${subIconsHtml}
-                        </div>
+                        ${headerInnerHtml}
                     </div>
                     <div class="folder-body">
                         <h3 class="folder-title">${categoryName}</h3>
@@ -631,12 +793,33 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const closeCategoryBuilder = function () {
-        if (!categoryBuilder.modal || !categoryBuilder.modal.classList.contains('is-open')) {
+        if (!categoryBuilder.modal || categoryBuilder.modal.classList.contains('hidden')) {
             return;
         }
-        categoryBuilder.modal.classList.remove('is-open');
-        categoryBuilder.modal.setAttribute('aria-hidden', 'true');
-        updateBodyLock();
+        categoryBuilder.modal.classList.add('closing');
+        setTimeout(function() {
+            categoryBuilder.modal.classList.add('hidden');
+            categoryBuilder.modal.classList.remove('flex', 'closing');
+            // Hide delete section on close
+            const deleteSection = categoryBuilder.modal.querySelector('[data-category-builder-delete-section]');
+            if (deleteSection) deleteSection.style.display = 'none';
+            updateBodyLock();
+        }, 300);
+    };
+
+    window.selectUserBuilderIcon = function (radio) {
+        document.querySelectorAll('.cb-icon-option').forEach(function(lbl) {
+            lbl.classList.remove('is-active');
+        });
+        radio.parentElement.classList.add('is-active');
+    };
+
+    const selectUserBuilderIconByValue = function (val) {
+        const radio = document.querySelector(`input[name="builder_icon"][value="${val || ''}"]`);
+        if (radio) {
+            radio.checked = true;
+            window.selectUserBuilderIcon(radio);
+        }
     };
 
     const openCategoryBuilderForEdit = function (categoryName) {
@@ -646,6 +829,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         categoryBuilderState.source = 'edit';
         categoryBuilderState.editCategoryName = categoryName;
+        categoryBuilderState.editCategoryDbId = null; // Will be set if DB-backed
 
         closeCategoryMenu(modalCategoryControls);
         closeCategoryMenu(shortcutCategoryControls);
@@ -656,6 +840,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (categoryBuilder.titleInput) {
             categoryBuilder.titleInput.value = categoryName;
         }
+
+        // Prefill icon radio
+        const customCategoryIcons = readCustomCategoryIcons();
+        const iconValue = customCategoryIcons[categoryName] || '';
+        selectUserBuilderIconByValue(iconValue);
 
         // Find all cards matching this category
         const matchedCards = serviceCards.filter(function (card) {
@@ -668,13 +857,25 @@ document.addEventListener('DOMContentLoaded', function () {
             const row = buildCategoryLinkRow(title);
             if (categoryBuilder.links) {
                 categoryBuilder.links.appendChild(row);
+                const input = row.querySelector('[data-category-builder-link-input]');
+                if (input) {
+                    initPremiumSelect(input);
+                }
             }
         });
 
         updateCategoryBuilderEmptyState();
 
-        categoryBuilder.modal.classList.add('is-open');
-        categoryBuilder.modal.setAttribute('aria-hidden', 'false');
+        // Update modal title for edit mode
+        const modalTitle = categoryBuilder.modal.querySelector('[data-category-builder-modal-title]');
+        if (modalTitle) modalTitle.textContent = 'Edit Kategori';
+
+        // Show delete section in edit mode
+        const deleteSection = categoryBuilder.modal.querySelector('[data-category-builder-delete-section]');
+        if (deleteSection) deleteSection.style.display = 'block';
+
+        categoryBuilder.modal.classList.remove('hidden');
+        categoryBuilder.modal.classList.add('flex');
         updateBodyLock();
 
         if (categoryBuilder.titleInput) {
@@ -694,8 +895,20 @@ document.addEventListener('DOMContentLoaded', function () {
         closeCategoryMenu(shortcutCategoryControls);
         closeProfilePanel();
         resetCategoryBuilderForm();
-        categoryBuilder.modal.classList.add('is-open');
-        categoryBuilder.modal.setAttribute('aria-hidden', 'false');
+
+        // Reset icon selection to default (empty value)
+        selectUserBuilderIconByValue('');
+
+        // Update modal title for create mode
+        const modalTitle = categoryBuilder.modal.querySelector('[data-category-builder-modal-title]');
+        if (modalTitle) modalTitle.textContent = 'Tambah Kategori';
+
+        // Hide delete section in create mode
+        const deleteSection = categoryBuilder.modal.querySelector('[data-category-builder-delete-section]');
+        if (deleteSection) deleteSection.style.display = 'none';
+
+        categoryBuilder.modal.classList.remove('hidden');
+        categoryBuilder.modal.classList.add('flex');
         updateBodyLock();
 
         if (categoryBuilder.titleInput) {
@@ -841,17 +1054,76 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const selectedLinkTitles = getCategoryBuilderLinks();
 
+        // Save selected icon
+        const selectedIconRadio = document.querySelector('input[name="builder_icon"]:checked');
+        const iconValue = selectedIconRadio ? selectedIconRadio.value : '';
+        const customCategoryIcons = readCustomCategoryIcons();
+        if (iconValue) {
+            customCategoryIcons[newCategoryName] = iconValue;
+        } else {
+            delete customCategoryIcons[newCategoryName];
+        }
+
         if (categoryBuilderState.source === 'edit') {
             const originalName = categoryBuilderState.editCategoryName;
+
+            // For DB-backed categories, call the server API
+            if (categoryBuilderState.editCategoryDbId) {
+                const dbId = categoryBuilderState.editCategoryDbId;
+                const updateUrl = (window.PolTree.updateCategoryRoute || '').replace('__ID__', dbId);
+                const csrfToken = window.PolTree.csrfToken || document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+                fetch(updateUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nama_kategori: newCategoryName,
+                        icon: iconValue
+                    })
+                })
+                .then(function(response) {
+                    if (!response.ok) {
+                        return response.json().then(function(errData) {
+                            throw new Error(errData.message || 'Gagal memperbarui kategori.');
+                        }).catch(function() {
+                            throw new Error('Gagal memproses respons server.');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    if (data.success) {
+                        showToast(data.message || 'Kategori berhasil diperbarui!', 'success');
+                        // Reload page to reflect changes from server
+                        window.location.reload();
+                    } else {
+                        showToast(data.message || 'Gagal memperbarui kategori.', 'error');
+                    }
+                })
+                .catch(function(error) {
+                    console.error('Error updating category:', error);
+                    showToast(error.message || 'Terjadi kesalahan saat memperbarui kategori.', 'error');
+                });
+
+                closeCategoryBuilder();
+                return;
+            }
+            
             
             // 1. Persist the new category name
             persistCustomCategory(newCategoryName);
 
-            // 2. If renamed, remove originalName from customCategories
+            // 2. If renamed, remove originalName from customCategories and icons
             if (originalName.toLowerCase() !== newCategoryName.toLowerCase()) {
                 const storedCustomCategories = readCustomCategories();
                 const filtered = storedCustomCategories.filter(c => c.toLowerCase() !== originalName.toLowerCase());
                 writeCustomCategories(Array.from(new Set(filtered)));
+
+                delete customCategoryIcons[originalName];
             }
 
             // 3. Update all card mappings in storedCategories
@@ -915,6 +1187,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             applyShortcutFilter(categoryBuilderState.source === 'shortcut' ? persistedName : readShortcutFilter());
         }
+
+        writeCustomCategoryIcons(customCategoryIcons);
 
         syncCustomCategories();
         syncServiceStates();
@@ -982,12 +1256,17 @@ document.addEventListener('DOMContentLoaded', function () {
             const row = buildCategoryLinkRow('');
 
             categoryBuilder.links.appendChild(row);
-            updateCategoryBuilderEmptyState();
 
             const input = row.querySelector('[data-category-builder-link-input]');
-
             if (input) {
-                input.focus();
+                initPremiumSelect(input);
+            }
+
+            updateCategoryBuilderEmptyState();
+
+            const trigger = row.querySelector('.premium-select-trigger');
+            if (trigger) {
+                trigger.focus();
             }
         });
     }
@@ -999,11 +1278,59 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!categoryToDelete) return;
                 
                 if (confirm(`Apakah Anda yakin ingin menghapus kategori "${categoryToDelete}" beserta seluruh pengelompokannya?`)) {
+                    // Check if this is a DB-backed category
+                    if (categoryBuilderState.editCategoryDbId) {
+                        const dbId = categoryBuilderState.editCategoryDbId;
+                        const deleteUrl = (window.PolTree.deleteCategoryRoute || '').replace('__ID__', dbId);
+                        const csrfToken = window.PolTree.csrfToken || document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+                        fetch(deleteUrl, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(function(response) {
+                            if (!response.ok) {
+                                return response.json().then(function(errData) {
+                                    throw new Error(errData.message || 'Gagal menghapus kategori.');
+                                }).catch(function() {
+                                    throw new Error('Gagal memproses respons server.');
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(function(data) {
+                            if (data.success) {
+                                showToast(data.message || 'Kategori berhasil dihapus.', 'success');
+                                // Reload page to reflect changes from server
+                                window.location.reload();
+                            } else {
+                                showToast(data.message || 'Gagal menghapus kategori.', 'error');
+                            }
+                        })
+                        .catch(function(error) {
+                            console.error('Error deleting category:', error);
+                            showToast(error.message || 'Terjadi kesalahan saat menghapus kategori.', 'error');
+                        });
+
+                        closeCategoryBuilder();
+                        return;
+                    }
+
+                    // localStorage-only category: original behavior
                     // Remove from customCategories list
                     const storedCustomCategories = readCustomCategories();
                     const filtered = storedCustomCategories.filter(c => c.toLowerCase() !== categoryToDelete.toLowerCase());
                     writeCustomCategories(filtered);
                     
+                    // Remove icon if exists
+                    const customCategoryIcons = readCustomCategoryIcons();
+                    delete customCategoryIcons[categoryToDelete];
+                    writeCustomCategoryIcons(customCategoryIcons);
+
                     // Clear associations
                     const storedCategories = readStoredCategories();
                     serviceCards.forEach(function (card) {
@@ -1082,6 +1409,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (categoryBuilder.modal) {
         categoryBuilder.modal.addEventListener('click', function (event) {
             if (event.target === categoryBuilder.modal) {
+                closeCategoryBuilder();
+            }
+            // Handle close button clicks (X and Batal)
+            if (event.target.closest('[data-category-builder-close]')) {
                 closeCategoryBuilder();
             }
         });
@@ -1215,6 +1546,8 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault();
             event.stopPropagation();
             const categoryName = categoryEditToggle.getAttribute('data-category-edit-toggle');
+            const dbId = categoryEditToggle.getAttribute('data-category-db-id') || null;
+            categoryBuilderState.editCategoryDbId = dbId;
             openCategoryBuilderForEdit(categoryName);
             return;
         }
@@ -1278,6 +1611,12 @@ document.addEventListener('DOMContentLoaded', function () {
     updateCategoryBuilderEmptyState();
     applyShortcutFilter(readShortcutFilter());
 
+    // Initialize static premium selects on load
+    const staticSelects = document.querySelectorAll('#linkKategori');
+    staticSelects.forEach(function (select) {
+        initPremiumSelect(select);
+    });
+
     // Restore active tab dynamically on page load
     const storedBookmarks = JSON.parse(localStorage.getItem(bookmarkStorageKey) || '[]');
     const defaultTab = storedBookmarks.length === 0 ? 'semua' : 'tersimpan';
@@ -1322,11 +1661,12 @@ document.addEventListener('DOMContentLoaded', function () {
     window.openCategoryBuilder = openCategoryBuilder;
     window.openCategoryBuilderForEdit = openCategoryBuilderForEdit;
     window.closeCategoryBuilder = closeCategoryBuilder;
+    window.updateBodyLock = updateBodyLock;
 
     updateBodyLock();
 });
 
-window.openLinkModal = function(id = '', title = '', url = '', desc = '', role = '', tags = '[]') {
+window.openLinkModal = function(id = '', title = '', url = '', desc = '', role = '', tags = '[]', id_kategori = '') {
     const modal = document.getElementById('linkModal');
     const form = document.getElementById('linkForm');
     if (!modal || !form) return;
@@ -1346,6 +1686,24 @@ window.openLinkModal = function(id = '', title = '', url = '', desc = '', role =
     document.getElementById('linkUrl').value = url;
     document.getElementById('linkDescription').value = desc;
     
+    const kategoriSelect = document.getElementById('linkKategori');
+    if (kategoriSelect) {
+        kategoriSelect.value = id_kategori;
+        if (typeof kategoriSelect.refreshPremiumSelect === 'function') {
+            kategoriSelect.refreshPremiumSelect();
+        }
+    }
+
+    // Reset quick category form
+    const quickContainer = document.getElementById('userQuickCategoryContainer');
+    if (quickContainer) {
+        quickContainer.style.display = 'none';
+    }
+    const quickInput = document.getElementById('user_quick_nama_kategori');
+    if (quickInput) {
+        quickInput.value = '';
+    }
+
     const roleInput = document.getElementById('linkRole');
     if (roleInput) {
         roleInput.value = role;
@@ -1355,6 +1713,10 @@ window.openLinkModal = function(id = '', title = '', url = '', desc = '', role =
     document.querySelectorAll('.user-tag-checkbox').forEach(cb => {
         cb.checked = selectedTags.includes(parseInt(cb.value));
     });
+
+    if (typeof window.updateBodyLock === 'function') {
+        window.updateBodyLock();
+    }
 };
 
 window.closeLinkModal = function() {
@@ -1364,5 +1726,19 @@ window.closeLinkModal = function() {
     setTimeout(() => {
         m.classList.add('hidden');
         m.classList.remove('flex', 'closing');
+        
+        // Reset quick category form on close
+        const quickContainer = document.getElementById('userQuickCategoryContainer');
+        if (quickContainer) {
+            quickContainer.style.display = 'none';
+        }
+        const quickInput = document.getElementById('user_quick_nama_kategori');
+        if (quickInput) {
+            quickInput.value = '';
+        }
+
+        if (typeof window.updateBodyLock === 'function') {
+            window.updateBodyLock();
+        }
     }, 300);
 };

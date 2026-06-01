@@ -29,11 +29,11 @@
             </div>
             <button type="button" class="btn-import" onclick="openImportModal()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2-2H5a2 2 0 0 1-2-2v-4"></path>
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="17 8 12 3 7 8"></polyline>
                     <line x1="12" y1="3" x2="12" y2="15"></line>
                 </svg>
-                Impor Excel
+                Impor Pengguna
             </button>
             <button type="button" class="btn-add" onclick="openAddModal()">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -321,9 +321,9 @@
                     <div style="font-weight: 700; color: #1e293b; margin-bottom: 6px;">Format Kolom Excel:</div>
                     <ul style="list-style-type: decimal; padding-left: 16px; margin: 0; display: flex; flex-direction: column; gap: 4px;">
                         <li><strong>NIK</strong> (wajib, unik/angka)</li>
-                        <li><strong>Nama</strong> (wajib)</li>
-                        <li><strong>Email</strong> (wajib, format email unik)</li>
-                        <li><strong>Jabatan</strong> (wajib: Dosen, Tata Usaha, Laboran)</li>
+                        <li><strong>Nama Lengkap</strong> (wajib)</li>
+                        <li><strong>Alamat Email</strong> (wajib, format email unik)</li>
+                        <li><strong>Role</strong> (wajib: Dosen, Tata Usaha, Laboran)</li>
                         <li><strong>Password</strong> (opsional, bawaan: <em>poltree123</em> jika kosong)</li>
                     </ul>
                     <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #e2e8f0; font-size: 11px;">
@@ -365,6 +365,13 @@
 @push('scripts')
 <script>
     function openAddModal() {
+        const select = document.querySelector('#addModal select[name="jabatan"]');
+        if (select) {
+            select.value = '';
+            if (typeof select.refreshPremiumSelect === 'function') {
+                select.refreshPremiumSelect();
+            }
+        }
         const m = document.getElementById('addModal');
         m.classList.remove('hidden');
         m.classList.add('flex');
@@ -412,6 +419,9 @@
         document.getElementById('edit_nama').value = nama;
         document.getElementById('edit_email').value = email;
         document.getElementById('edit_jabatan').value = jabatan;
+        if (typeof document.getElementById('edit_jabatan').refreshPremiumSelect === 'function') {
+            document.getElementById('edit_jabatan').refreshPremiumSelect();
+        }
         
         m.classList.remove('hidden');
         m.classList.add('flex');
@@ -428,14 +438,14 @@
     }
 
     // Close on outside click
-    window.onclick = function(event) {
+    window.addEventListener('click', function(event) {
         const addModal = document.getElementById('addModal');
         const editModal = document.getElementById('editModal');
         const importModal = document.getElementById('importModal');
-        if (event.target == addModal) closeAddModal();
-        if (event.target == editModal) closeEditModal();
-        if (event.target == importModal) closeImportModal();
-    }
+        if (event.target === addModal) closeAddModal();
+        if (event.target === editModal) closeEditModal();
+        if (event.target === importModal) closeImportModal();
+    });
 
     document.addEventListener('DOMContentLoaded', function() {
         initializeViewModeToggle('users');

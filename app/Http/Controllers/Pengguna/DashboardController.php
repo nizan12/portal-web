@@ -83,6 +83,7 @@ class DashboardController extends Controller
                     'is_custom' => $link->nik !== null,
                     'id' => $link->id_link,
                     'role' => $link->role,
+                    'id_kategori' => $link->id_kategori,
                     'tags' => $link->tags->pluck('nama_tag')->toArray(),
                     'tag_ids' => $link->tags->pluck('id_tag')->toArray(),
                 ];
@@ -153,6 +154,7 @@ class DashboardController extends Controller
             'nama_web' => 'required|string|max:255',
             'url' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'id_kategori' => 'nullable|exists:t_kategori,id_kategori',
             'role' => 'nullable|string|in:Dosen,Tata Usaha,Laboran',
             'tag_ids' => 'nullable|array',
             'tag_ids.*' => 'exists:t_tag,id_tag',
@@ -162,6 +164,7 @@ class DashboardController extends Controller
             'nama_web' => $request->nama_web,
             'url' => $request->url,
             'deskripsi' => $request->deskripsi,
+            'id_kategori' => $request->id_kategori,
             'role' => $request->role,
             'nik' => auth('pengguna')->user()->nik,
             'status' => 'aktif',
@@ -177,6 +180,80 @@ class DashboardController extends Controller
         return back()->with('success', 'Link kustom berhasil ditambahkan.');
     }
 
+    public function storeUserCategory(Request $request)
+    {
+        $request->validate([
+            'nama_kategori' => 'required|string|max:255',
+            'icon' => 'nullable|string|max:255',
+        ]);
+
+        $cat = Kategori::create([
+            'nama_kategori' => $request->nama_kategori,
+            'icon' => $request->icon,
+            'nik' => auth('pengguna')->user()->nik, // User-owned category
+        ]);
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori berhasil ditambahkan.',
+                'category' => $cat
+            ]);
+        }
+
+        return back()->with('success', 'Kategori berhasil ditambahkan.');
+    }
+
+    public function updateUserCategory(Request $request, $id)
+    {
+        $request->validate([
+            'nama_kategori' => 'required|string|max:255',
+            'icon' => 'nullable|string|max:255',
+        ]);
+
+        $category = Kategori::where('id_kategori', $id)
+            ->where('nik', auth('pengguna')->user()->nik)
+            ->firstOrFail();
+
+        $category->update([
+            'nama_kategori' => $request->nama_kategori,
+            'icon' => $request->icon,
+        ]);
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori berhasil diperbarui.',
+                'category' => $category
+            ]);
+        }
+
+        return back()->with('success', 'Kategori berhasil diperbarui.');
+    }
+
+    public function deleteUserCategory($id)
+    {
+        $category = Kategori::where('id_kategori', $id)
+            ->where('nik', auth('pengguna')->user()->nik)
+            ->firstOrFail();
+
+        // Detach links from this category before deleting
+        Link::where('id_kategori', $id)
+            ->where('nik', auth('pengguna')->user()->nik)
+            ->update(['id_kategori' => null]);
+
+        $category->delete();
+
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Kategori berhasil dihapus.'
+            ]);
+        }
+
+        return back()->with('success', 'Kategori berhasil dihapus.');
+    }
+
     public function updateUserLink(Request $request, $id)
     {
         $url = $request->input('url');
@@ -189,6 +266,7 @@ class DashboardController extends Controller
             'nama_web' => 'required|string|max:255',
             'url' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
+            'id_kategori' => 'nullable|exists:t_kategori,id_kategori',
             'role' => 'nullable|string|in:Dosen,Tata Usaha,Laboran',
             'tag_ids' => 'nullable|array',
             'tag_ids.*' => 'exists:t_tag,id_tag',
@@ -204,6 +282,7 @@ class DashboardController extends Controller
             'nama_web' => $request->nama_web,
             'url' => $request->url,
             'deskripsi' => $request->deskripsi,
+            'id_kategori' => $request->id_kategori,
             'role' => $request->role,
         ]);
 

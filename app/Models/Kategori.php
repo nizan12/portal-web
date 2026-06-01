@@ -12,7 +12,7 @@ class Kategori extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['id_kategori', 'nama_kategori', 'nik'];
+    protected $fillable = ['id_kategori', 'nama_kategori', 'nik', 'icon'];
 
     public function links()
     {

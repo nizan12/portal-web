@@ -300,9 +300,9 @@
             }, 300);
         }
 
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('tagModal')) closeModal();
-        }
+        window.addEventListener('click', function(event) {
+            if (event.target === document.getElementById('tagModal')) closeModal();
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
             initializeViewModeToggle('tags');

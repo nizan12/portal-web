@@ -275,13 +275,29 @@
                         </div>
 
                         <div class="premium-modal-form-group">
-                            <label class="premium-modal-label">Kategori</label>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="premium-modal-label" style="margin-bottom: 0;">Kategori</label>
+                                <button type="button" onclick="toggleQuickCategoryForm()" class="text-[11px] font-bold flex items-center gap-1 cursor-pointer" style="background: none; border: none; padding: 0; color: var(--orange);">
+                                    + Tambah Kategori Baru
+                                </button>
+                            </div>
                             <select name="id_kategori" id="id_kategori" class="premium-modal-input appearance-none cursor-pointer">
                                 <option value="">Pilih Kategori...</option>
                                 @foreach($categories as $cat)
                                     <option value="{{ $cat->id_kategori }}">{{ $cat->nama_kategori }}</option>
                                 @endforeach
                             </select>
+
+                            {{-- Quick Add Category Section (Initially Hidden) --}}
+                            <div id="quickCategoryContainer" class="hidden" style="display: none; margin-top: 12px; padding: 12px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 10px; flex-direction: column; gap: 8px;">
+                                <span style="font-size: 11.5px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">Tambah Kategori Baru</span>
+                                <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
+                                    <input type="text" id="quick_nama_kategori" placeholder="Nama Kategori..." class="premium-modal-input" style="height: 38px; min-height: 0; padding: 0 12px; font-size: 13px; flex: 1; border-radius: 8px; background: #ffffff;">
+                                    <button type="button" onclick="submitQuickCategory()" style="height: 38px; padding: 0 16px; border-radius: 8px; background: var(--orange, #f97316); color: white; font-size: 12px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;" onmouseover="this.style.opacity=0.9" onmouseout="this.style.opacity=1">
+                                        Simpan
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="premium-modal-form-group">
@@ -289,6 +305,7 @@
                             <select name="status" id="status" class="premium-modal-input appearance-none cursor-pointer">
                                 <option value="aktif">Aktif</option>
                                 <option value="tidak aktif">Tidak Aktif</option>
+                                <option value="bermasalah">Bermasalah</option>
                             </select>
                         </div>
 
@@ -329,6 +346,23 @@
             document.getElementById('id_kategori').value = '';
             document.getElementById('status').value = 'aktif';
             
+            if (typeof document.getElementById('id_kategori').refreshPremiumSelect === 'function') {
+                document.getElementById('id_kategori').refreshPremiumSelect();
+            }
+            if (typeof document.getElementById('status').refreshPremiumSelect === 'function') {
+                document.getElementById('status').refreshPremiumSelect();
+            }
+            
+            // Reset quick category form
+            const quickContainer = document.getElementById('quickCategoryContainer');
+            if (quickContainer) {
+                quickContainer.style.display = 'none';
+            }
+            const quickInput = document.getElementById('quick_nama_kategori');
+            if (quickInput) {
+                quickInput.value = '';
+            }
+
             // Reset tags
             document.querySelectorAll('input[name="tag_ids[]"]').forEach(cb => cb.checked = false);
             
@@ -345,6 +379,23 @@
             document.getElementById('id_kategori').value = data.id_kategori || '';
             document.getElementById('status').value = data.status || 'aktif';
             
+            if (typeof document.getElementById('id_kategori').refreshPremiumSelect === 'function') {
+                document.getElementById('id_kategori').refreshPremiumSelect();
+            }
+            if (typeof document.getElementById('status').refreshPremiumSelect === 'function') {
+                document.getElementById('status').refreshPremiumSelect();
+            }
+            
+            // Reset quick category form
+            const quickContainer = document.getElementById('quickCategoryContainer');
+            if (quickContainer) {
+                quickContainer.style.display = 'none';
+            }
+            const quickInput = document.getElementById('quick_nama_kategori');
+            if (quickInput) {
+                quickInput.value = '';
+            }
+
             // Set tags
             const tagIds = data.tag_ids || [];
             document.querySelectorAll('input[name="tag_ids[]"]').forEach(cb => {
@@ -354,10 +405,85 @@
             showModal();
         }
 
+        function toggleQuickCategoryForm() {
+            const container = document.getElementById('quickCategoryContainer');
+            if (container) {
+                if (container.style.display === 'none' || container.classList.contains('hidden')) {
+                    container.classList.remove('hidden');
+                    container.style.display = 'flex';
+                    document.getElementById('quick_nama_kategori').focus();
+                } else {
+                    container.style.display = 'none';
+                }
+            }
+        }
+
+        function submitQuickCategory() {
+            const nameInput = document.getElementById('quick_nama_kategori');
+            const name = nameInput ? nameInput.value.trim() : '';
+
+            if (!name) {
+                showToast('Nama kategori tidak boleh kosong.', 'error');
+                return;
+            }
+
+            fetch("{{ route('admin.categories.store') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({
+                    nama_kategori: name
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errData => {
+                        throw new Error(errData.message || 'Terjadi kesalahan validasi.');
+                    }).catch(() => {
+                        throw new Error('Gagal memproses respons server.');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message, 'success');
+
+                    // Add to dropdown and select it
+                    const select = document.getElementById('id_kategori');
+                    const opt = document.createElement('option');
+                    opt.value = data.category.id_kategori;
+                    opt.textContent = data.category.nama_kategori;
+                    select.appendChild(opt);
+                    select.value = data.category.id_kategori;
+                    if (typeof select.refreshPremiumSelect === 'function') {
+                        select.refreshPremiumSelect();
+                    }
+
+                    // Reset input & hide
+                    nameInput.value = '';
+                    const container = document.getElementById('quickCategoryContainer');
+                    if (container) {
+                        container.style.display = 'none';
+                    }
+                } else {
+                    showToast(data.message || 'Gagal menambahkan kategori.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding category:', error);
+                showToast(error.message || 'Terjadi kesalahan saat menambahkan kategori.', 'error');
+            });
+        }
+
         function showModal() {
             const m = document.getElementById('linkModal');
             m.classList.remove('hidden');
             m.classList.add('flex');
+            document.body.classList.add('modal-open');
         }
 
         function closeModal() {
@@ -367,12 +493,13 @@
             setTimeout(() => {
                 m.classList.add('hidden');
                 m.classList.remove('flex', 'closing');
+                document.body.classList.remove('modal-open');
             }, 300);
         }
 
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('linkModal')) closeModal();
-        }
+        window.addEventListener('click', function(event) {
+            if (event.target === document.getElementById('linkModal')) closeModal();
+        });
 
         document.addEventListener('DOMContentLoaded', function() {
             initializeViewModeToggle('links');
