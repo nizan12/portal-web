@@ -54,18 +54,22 @@
                             <td class="text-center font-mono text-[13px] text-gray-600">{{ $user->nik }}</td>
                             <td class="pl-6">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-[12px] font-bold text-[#080d5f]">
-                                        {{ strtoupper(substr($user->nama_user, 0, 1)) }}
+                                    <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-[12px] font-bold text-[#080d5f] overflow-hidden">
+                                        @if($user->foto)
+                                            <img src="{{ asset($user->foto) }}" class="w-full h-full object-cover">
+                                        @else
+                                            {{ strtoupper(substr($user->nama_user, 0, 1)) }}
+                                        @endif
                                     </div>
                                     <span class="font-bold text-[14px] text-[#080d5f]">{{ $user->nama_user }}</span>
                                 </div>
                             </td>
                             <td class="text-gray-500 text-[13px]">{{ $user->email }}</td>
                             <td>
-                                <span class="px-3 py-1 rounded-full text-[11px] font-bold tracking-wide uppercase {{ 
-                                    $user->jabatan === 'Dosen' ? 'bg-indigo-100 text-indigo-700' : 
-                                    ($user->jabatan === 'Tata Usaha' ? 'bg-amber-100 text-amber-700' : 
-                                    ($user->jabatan === 'Laboran' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-700')) 
+                                <span class="role-badge {{ 
+                                    $user->jabatan === 'Dosen' ? 'role-badge-dosen' : 
+                                    ($user->jabatan === 'Tata Usaha' ? 'role-badge-tu' : 
+                                    ($user->jabatan === 'Laboran' ? 'role-badge-laboran' : '')) 
                                 }}">
                                     {{ $user->jabatan ?: 'User' }}
                                 </span>
