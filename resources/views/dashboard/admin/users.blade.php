@@ -27,6 +27,14 @@
                     <span>Kartu</span>
                 </button>
             </div>
+            <button type="button" class="btn-import" onclick="openImportModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2-2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Impor Excel
+            </button>
             <button type="button" class="btn-add" onclick="openAddModal()">
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M7 1V13M1 7H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -295,6 +303,62 @@
             </div>
         </div>
     </div>
+
+    {{-- MODAL: Impor Excel --}}
+    <div id="importModal" class="hidden premium-modal-overlay">
+        <div class="premium-modal-shell">
+            <div class="premium-modal-card">
+                <button type="button" onclick="closeImportModal()" class="premium-modal-close-btn" aria-label="Tutup">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+
+                <h2 class="premium-modal-title">Impor Pengguna</h2>
+
+                <div class="mb-5 p-4 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-500 leading-relaxed" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 20px;">
+                    <div style="font-weight: 700; color: #1e293b; margin-bottom: 6px;">Format Kolom Excel:</div>
+                    <ul style="list-style-type: decimal; padding-left: 16px; margin: 0; display: flex; flex-direction: column; gap: 4px;">
+                        <li><strong>NIK</strong> (wajib, unik/angka)</li>
+                        <li><strong>Nama</strong> (wajib)</li>
+                        <li><strong>Email</strong> (wajib, format email unik)</li>
+                        <li><strong>Jabatan</strong> (wajib: Dosen, Tata Usaha, Laboran)</li>
+                        <li><strong>Password</strong> (opsional, bawaan: <em>poltree123</em> jika kosong)</li>
+                    </ul>
+                    <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #e2e8f0; font-size: 11px;">
+                        Anda dapat mengunduh format contoh Excel di sini: 
+                        <a href="{{ route('admin.users.template') }}" style="color: #10b981; font-weight: 700; text-decoration: underline;">Unduh Template Excel</a>
+                    </div>
+                </div>
+
+                <form action="{{ route('admin.users.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    
+                    <div class="premium-modal-form-group">
+                        <label class="premium-modal-label">Pilih Berkas Excel (.xlsx, .xls, .csv)</label>
+                        <div class="excel-upload-zone" id="excelDropzone">
+                            <input type="file" name="excel_file" id="excelFileInput" required accept=".xlsx,.xls,.csv" style="display: none;">
+                            <div class="excel-upload-prompt" onclick="document.getElementById('excelFileInput').click()">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 8px;">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <span class="upload-title" style="font-weight: 700; font-size: 13px; color: #1e293b;">Pilih file excel Anda</span>
+                                <span class="upload-subtitle" style="font-size: 11px; color: #64748b;" id="excelFileName">atau seret file ke sini</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="premium-modal-actions">
+                        <button type="button" onclick="closeImportModal()" class="premium-modal-btn btn-cancel">Batal</button>
+                        <button type="submit" class="premium-modal-btn btn-save" style="background: #10b981; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);">Mulai Impor</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     @endpush
 @endsection
 
@@ -315,6 +379,26 @@
             m.classList.remove('flex', 'closing');
         }, 300);
     }
+
+    function openImportModal() {
+        const m = document.getElementById('importModal');
+        m.classList.remove('hidden');
+        m.classList.add('flex');
+    }
+
+    function closeImportModal() {
+        const m = document.getElementById('importModal');
+        if (!m) return;
+        m.classList.add('closing');
+        setTimeout(() => {
+            m.classList.add('hidden');
+            m.classList.remove('flex', 'closing');
+            document.getElementById('excelFileInput').value = '';
+            document.getElementById('excelFileName').textContent = 'atau seret file ke sini';
+        }, 300);
+    }
+
+
 
     function openEditModal(nik, nama, email, jabatan) {
         const m = document.getElementById('editModal');
@@ -347,12 +431,63 @@
     window.onclick = function(event) {
         const addModal = document.getElementById('addModal');
         const editModal = document.getElementById('editModal');
+        const importModal = document.getElementById('importModal');
         if (event.target == addModal) closeAddModal();
         if (event.target == editModal) closeEditModal();
+        if (event.target == importModal) closeImportModal();
     }
 
     document.addEventListener('DOMContentLoaded', function() {
         initializeViewModeToggle('users');
+
+        // Drag & Drop Setup
+        const dropzone = document.getElementById('excelDropzone');
+        const fileInput = document.getElementById('excelFileInput');
+        const fileName = document.getElementById('excelFileName');
+
+        if (dropzone && fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    fileName.textContent = file.name;
+                } else {
+                    fileName.textContent = 'atau seret file ke sini';
+                }
+            });
+
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }, false);
+            });
+
+            // Highlight drop area when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropzone.addEventListener(eventName, function() {
+                    dropzone.style.borderColor = '#10b981';
+                    dropzone.style.background = '#f0fdf4';
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropzone.addEventListener(eventName, function() {
+                    dropzone.style.borderColor = '#cbd5e1';
+                    dropzone.style.background = '#f8fafc';
+                }, false);
+            });
+
+            // Handle dropped files
+            dropzone.addEventListener('drop', function(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files.length) {
+                    fileInput.files = files;
+                    fileName.textContent = files[0].name;
+                }
+            }, false);
+        }
     });
 </script>
 @endpush

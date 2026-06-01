@@ -59,6 +59,10 @@ Route::middleware('auth:admin')->group(function () {
         ->name('admin.users');
     Route::post('/admin/users', [AdminUserController::class, 'storeUser'])
         ->name('admin.users.store');
+    Route::post('/admin/users/import', [AdminUserController::class, 'importUsers'])
+        ->name('admin.users.import');
+    Route::get('/admin/users/import/template', [AdminUserController::class, 'downloadTemplate'])
+        ->name('admin.users.template');
     Route::put('/admin/users/{nik}', [AdminUserController::class, 'updateUser'])
         ->name('admin.users.update');
     Route::delete('/admin/users/{nik}', [AdminUserController::class, 'deleteUser'])
