@@ -88,7 +88,7 @@ php artisan key:generate
 ### 5. Migrasi Database dan Seeders
 Jalankan migrasi database beserta data awal untuk membuat tabel sistem dan akun uji coba:
 ```bash
-php artisan migrate --seed
+php artisan migrate:fresh --seed
 ```
 
 ### 6. Kompilasi Aset Frontend
