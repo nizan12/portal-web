@@ -124,6 +124,128 @@ Setelah melakukan `--seed`, Anda dapat menggunakan akun bawaan berikut untuk men
 
 ---
 
+## 🔌 Integrasi API & Health Check
+
+POLTREE memiliki modul pemantauan keaktifan website (*service uptime monitor*) yang terintegrasi secara otomatis menggunakan API eksternal **Downtime Check**:
+
+* **Endpoint API Eksternal:** `https://downtimecheck.vercel.app/api/check`
+* **Metode:** `GET`
+* **Parameter Kirim:** 
+  * `url` (string) - Alamat website tujuan yang akan diperiksa statusnya.
+* **Format Respons API:**
+  ```json
+  {
+    "success": true,
+    "data": {
+      "online": true,
+      "statusCode": 200,
+      "responseTimeMs": 142,
+      "statusText": "OK",
+      "errorMessage": null
+    }
+  }
+  ```
+
+---
+
+## 🗄️ Fitur Basis Data Lanjutan
+
+Untuk menjamin integritas data yang kokoh dan efisiensi pemrosesan data, sistem database POLTREE telah ditingkatkan dengan fitur basis data lanjutan sebagai berikut:
+
+### 1. Database Trigger (`trg_after_link_update`)
+* **Tujuan:** Mencatat log riwayat perubahan tautan secara otomatis ke tabel `t_audit_log`.
+* **Cara Kerja:** Memicu aksi `AFTER UPDATE` pada tabel `t_link`. Jika terjadi perubahan pada kolom `status` atau `url`, data nilai lama (*OLD*) dan nilai baru (*NEW*) akan disimpan langsung ke tabel audit log.
+* **Definisi SQL:**
+  ```sql
+  CREATE TRIGGER trg_after_link_update
+  AFTER UPDATE ON t_link
+  FOR EACH ROW
+  BEGIN
+      IF OLD.status <> NEW.status OR OLD.url <> NEW.url THEN
+          INSERT INTO t_audit_log (table_name, action, record_id, old_value, new_value)
+          VALUES (
+              't_link',
+              'UPDATE',
+              OLD.id_link,
+              CONCAT('status: ', OLD.status, ', url: ', OLD.url),
+              CONCAT('status: ', NEW.status, ', url: ', NEW.url)
+          );
+      END IF;
+  END
+  ```
+
+### 2. Stored Procedure (`sp_get_dashboard_statistics`)
+* **Tujuan:** Melakukan penghitungan agregat seluruh data statistik dashboard admin dalam satu panggilan tunggal.
+* **Fitur Terkandung:**
+  * **Agregat:** Menghitung jumlah tautan (`COUNT`), total tautan aktif (`SUM(IF(status = 'aktif', 1, 0))`), dan rata-rata waktu respon (`AVG(status_response_time_ms)`).
+  * **Subquery & Agregat:** Subquery internal tingkat lanjut untuk mendeteksi ID kategori yang paling aktif (memiliki tautan terbanyak) di tabel `t_terdaftar`, lalu mengambil nama kategori tersebut dari tabel `t_kategori`.
+* **Definisi SQL:**
+  ```sql
+  CREATE PROCEDURE sp_get_dashboard_statistics(
+      OUT out_total_links INT,
+      OUT out_active_links INT,
+      OUT out_avg_response_time INT,
+      OUT out_most_active_category VARCHAR(100)
+  )
+  BEGIN
+      SELECT 
+          COUNT(*),
+          SUM(IF(status = 'aktif', 1, 0)),
+          AVG(IF(status_response_time_ms IS NOT NULL, status_response_time_ms, 0))
+      INTO 
+          out_total_links,
+          out_active_links,
+          out_avg_response_time
+      FROM t_link;
+
+      BEGIN
+          DECLARE max_cat_id INT;
+          SELECT id_kategori INTO max_cat_id
+          FROM t_terdaftar 
+          GROUP BY id_kategori 
+          ORDER BY COUNT(id_link) DESC 
+          LIMIT 1;
+
+          IF max_cat_id IS NOT NULL THEN
+              SELECT nama_kategori INTO out_most_active_category
+              FROM t_kategori
+              WHERE id_kategori = max_cat_id
+              LIMIT 1;
+          ELSE
+              SET out_most_active_category = 'Tidak Ada';
+          END IF;
+      END;
+  END
+  ```
+
+### 3. Stored Function (`sf_get_category_link_count`)
+* **Tujuan:** Fungsi modular untuk menghitung jumlah tautan aktif yang terdaftar di bawah ID kategori tertentu.
+* **Definisi SQL:**
+  ```sql
+  CREATE FUNCTION sf_get_category_link_count(cat_id INT)
+  RETURNS INT
+  DETERMINISTIC
+  READS SQL DATA
+  BEGIN
+      DECLARE link_count INT;
+      SELECT COUNT(*) INTO link_count
+      FROM t_terdaftar
+      WHERE id_kategori = cat_id;
+      RETURN link_count;
+  END
+  ```
+
+### 4. Database CHECK Constraint (`chk_link_status`)
+* **Tujuan:** Menjamin konsistensi data tingkat tinggi dengan membatasi nilai yang masuk ke kolom `status` tabel `t_link`.
+* **Definisi SQL:**
+  ```sql
+  ALTER TABLE t_link
+  ADD CONSTRAINT chk_link_status
+  CHECK (status IN ('aktif', 'bermasalah'))
+  ```
+
+---
+
 ## 📁 Struktur Direktori Penting
 
 * `app/Http/Controllers/` - Mengontrol logika autentikasi, dashboard, dan operasi CRUD.
