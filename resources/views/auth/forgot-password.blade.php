@@ -110,6 +110,45 @@
             </div>
         </div>
     </main>
+
+    <!-- GSAP CDN & Premium Animations -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Animate background overlay & blobs
+            gsap.fromTo('.absolute.bg-cover', { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: 1.6, ease: 'power2.out' });
+            gsap.from('.pointer-events-none', {
+                opacity: 0,
+                scale: 0.8,
+                duration: 1.5,
+                stagger: 0.2,
+                ease: 'back.out(1.7)'
+            });
+
+            // Create timeline for smooth stagger
+            const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+            // Animate Welcome Section
+            tl.from('section:nth-child(1) > div', { opacity: 0, y: -25, duration: 0.8 }, '+=0.2')
+              .from('section:nth-child(1) > h1', { opacity: 0, x: -35, duration: 0.8 }, '-=0.6')
+              .from('section:nth-child(1) > p', { opacity: 0, x: -35, duration: 0.8 }, '-=0.6');
+
+            // Animate Forgot Password Card
+            tl.from('section:nth-child(2)', { 
+                opacity: 0, 
+                y: 50, 
+                scale: 0.95,
+                duration: 1, 
+                ease: 'back.out(1.2)' 
+            }, '-=0.8');
+
+            // Animate Form Content
+            tl.from('section:nth-child(2) > div', { opacity: 0, y: 15, duration: 0.5 }, '-=0.5')
+              .from('form > .space-y-1.5', { opacity: 0, y: 15, duration: 0.5 }, '-=0.3')
+              .from('form > button', { opacity: 0, y: 15, duration: 0.5 }, '-=0.2')
+              .from('form > a', { opacity: 0, y: 10, duration: 0.4 }, '-=0.2');
+        });
+    </script>
 </body>
 
 </html>
