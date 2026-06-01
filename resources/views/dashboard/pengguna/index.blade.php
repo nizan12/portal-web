@@ -296,12 +296,13 @@
                                 @endforeach
                             </div>
                         @else
-                            <div class="flex flex-col items-center justify-center py-10 bg-white rounded-2xl border border-dashed border-gray-200 text-gray-400">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-2 opacity-40">
+                            <div class="premium-dashed-empty">
+                                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
                                     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                                 </svg>
-                                <p class="text-sm font-medium">Belum ada link pribadi ditambahkan</p>
+                                <div class="empty-title">Belum ada link pribadi ditambahkan</div>
+                                <div class="empty-desc">Tautan website kustom buatan Anda akan muncul di sini. Silakan klik tombol "+ Link" di atas untuk menambahkan.</div>
                             </div>
                         @endif
                     </div>

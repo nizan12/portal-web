@@ -1881,4 +1881,50 @@ select.category-builder-link-input { background-image: url("data:image/svg+xml,%
     to { width: 0%; }
 }
 
+/* ── Premium Dashed Empty Box ── */
+.premium-dashed-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 32px;
+    margin: 20px 0;
+    background: #ffffff;
+    border-radius: 20px;
+    border: 2px dashed #e2e8f0;
+    color: #94a3b8;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(148, 163, 184, 0.03);
+    transition: all 0.3s ease;
+}
+
+.premium-dashed-empty:hover {
+    border-color: rgba(10, 17, 114, 0.2);
+    box-shadow: 0 6px 20px rgba(10, 17, 114, 0.04);
+}
+
+.premium-dashed-empty svg {
+    margin-bottom: 12px;
+    color: #cbd5e1;
+    transition: all 0.3s ease;
+}
+
+.premium-dashed-empty:hover svg {
+    color: var(--orange);
+    transform: translateY(-2px);
+}
+
+.premium-dashed-empty .empty-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--navy-dark);
+    margin-bottom: 4px;
+}
+
+.premium-dashed-empty .empty-desc {
+    font-size: 12px;
+    color: #64748b;
+    max-width: 320px;
+}
+
 
