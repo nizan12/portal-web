@@ -207,6 +207,33 @@
     </div>
 
     {{-- ═══════════════════════════════════════════════════════
+         MODAL: Konfirmasi Hapus (Global)
+         ═══════════════════════════════════════════════════════ --}}
+    <div id="confirmDeleteModal" class="confirm-modal hidden">
+        <div class="confirm-modal-card">
+            <div class="confirm-modal-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <h3 class="confirm-modal-title">Konfirmasi Hapus</h3>
+            <p class="confirm-modal-message" id="confirmDeleteMessage">Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.</p>
+            <div class="confirm-modal-actions">
+                <button type="button" class="confirm-modal-btn btn-confirm-cancel" onclick="closeConfirmModal()">Batal</button>
+                <button type="button" class="confirm-modal-btn btn-confirm-delete" id="confirmDeleteBtn" onclick="executeDelete()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Hapus
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- ═══════════════════════════════════════════════════════
          SCRIPT: Profil toggle & Password modal
          ═══════════════════════════════════════════════════════ --}}
     <script>
@@ -243,6 +270,32 @@
             const m = document.getElementById('passwordModal');
             m.classList.add('hidden');
             m.classList.remove('flex');
+        }
+
+        /* ── Confirm Delete Modal ─────────────────────────────── */
+        let _pendingDeleteForm = null;
+
+        function confirmDelete(formElement, message) {
+            _pendingDeleteForm = formElement;
+            const modal = document.getElementById('confirmDeleteModal');
+            const msgEl = document.getElementById('confirmDeleteMessage');
+            msgEl.textContent = message || 'Apakah Anda yakin ingin menghapus data ini? Tindakan ini tidak dapat dibatalkan.';
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeConfirmModal() {
+            _pendingDeleteForm = null;
+            const modal = document.getElementById('confirmDeleteModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function executeDelete() {
+            if (_pendingDeleteForm) {
+                _pendingDeleteForm.submit();
+            }
+            closeConfirmModal();
         }
     </script>
     @stack('scripts')

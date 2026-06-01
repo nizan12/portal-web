@@ -79,7 +79,7 @@
                                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                                         </svg>
                                     </button>
-                                    <form action="{{ route('admin.users.destroy', $user->nik) }}" method="POST" onsubmit="return confirm('Hapus pengguna ini?')" class="inline">
+                                    <form action="{{ route('admin.users.destroy', $user->nik) }}" method="POST" onsubmit="event.preventDefault(); confirmDelete(this, 'Apakah Anda yakin ingin menghapus pengguna &quot;{{ $user->nama_user }}&quot;?')" class="inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn-action btn-delete shadow-sm" title="Hapus">

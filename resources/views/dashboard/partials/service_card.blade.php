@@ -21,7 +21,7 @@
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4L18.5 2.5z"></path></svg>
                 </button>
                 {{-- Tombol hapus link pribadi --}}
-                <form action="{{ route('pengguna.links.destroy', $service['id']) }}" method="POST" onsubmit="return confirm('Hapus link ini?')" class="m-0 p-0 flex">
+                <form action="{{ route('pengguna.links.destroy', $service['id']) }}" method="POST" onsubmit="event.preventDefault(); confirmDelete(this, 'Apakah Anda yakin ingin menghapus link &quot;{{ $service['title'] }}&quot;?')" class="m-0 p-0 flex">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="card-action-btn delete-btn" title="Hapus Link">
