@@ -131,7 +131,7 @@
         </div>
     </main>
 
-    <!-- GSAP CDN & Premium Animations -->
+    <!-- GSAP CDN Animations -->
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
