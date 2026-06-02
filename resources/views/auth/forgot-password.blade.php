@@ -42,7 +42,7 @@
                     </h1>
 
                     <p class="mt-4 max-w-md text-lg leading-8 text-slate-700 sm:text-xl">
-                        Jangan khawatir! Masukkan username atau email Anda untuk mereset kata sandi.
+                        Jangan khawatir! Masukkan NIK atau email Anda untuk mereset kata sandi.
                     </p>
                 </section>
 
