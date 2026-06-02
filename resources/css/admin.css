@@ -3251,7 +3251,7 @@ select.category-builder-link-input {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   PREMIUM FOLDER STYLES
+    FOLDER STYLES
    ═══════════════════════════════════════════════════════════ */
 .folder-grid {
     display: grid;
@@ -3651,7 +3651,7 @@ select.category-builder-link-input {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   PREMIUM MODAL DESIGN SYSTEM (Link & Password Modals)
+    MODAL DESIGN SYSTEM (Link & Password Modals)
    ═══════════════════════════════════════════════════════════ */
 .premium-modal-overlay {
     position: fixed;
@@ -4709,7 +4709,7 @@ select.category-builder-link-input {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   PREMIUM CUSTOM SELECT DROPDOWNS
+    CUSTOM SELECT DROPDOWNS
    ═══════════════════════════════════════════════════════════ */
 .premium-select-wrapper {
     position: relative;
@@ -4839,9 +4839,11 @@ select.category-builder-link-input {
 .premium-select-options::-webkit-scrollbar {
     width: 5px;
 }
+
 .premium-select-options::-webkit-scrollbar-track {
     background: transparent;
 }
+
 .premium-select-options::-webkit-scrollbar-thumb {
     background: #c3cbda;
     border-radius: 10px;
@@ -4923,7 +4925,8 @@ select.category-builder-link-input {
 }
 
 .admin-table {
-    min-width: 700px !important; /* Ensures tables don't get squished, letting them scroll horizontally within their card */
+    min-width: 700px !important;
+    /* Ensures tables don't get squished, letting them scroll horizontally within their card */
     width: 100% !important;
 }
 
@@ -4931,11 +4934,11 @@ select.category-builder-link-input {
     .mobile-sidebar-toggle {
         display: flex;
     }
-    
+
     .admin-sidebar {
         z-index: 1100;
     }
-    
+
     .admin-topbar {
         padding: 0 20px;
     }
@@ -4945,7 +4948,7 @@ select.category-builder-link-input {
     .admin-topbar {
         padding: 0 16px;
     }
-    
+
     /* Responsive Page Headers for all pages (links, users, categories, tags, services) */
     .links-header,
     .users-header,
@@ -4956,7 +4959,7 @@ select.category-builder-link-input {
         gap: 16px !important;
         width: 100% !important;
     }
-    
+
     .links-header .flex,
     .users-header .flex,
     .categories-header .flex,
@@ -4974,7 +4977,7 @@ select.category-builder-link-input {
         font-size: 20px !important;
         margin-bottom: 0 !important;
     }
-    
+
     /* Stretch buttons & view toggles to span full width */
     .btn-add,
     .btn-import {
@@ -4983,12 +4986,12 @@ select.category-builder-link-input {
         justify-content: center !important;
         box-sizing: border-box !important;
     }
-    
+
     .view-toggle-wrap {
         width: 100% !important;
         display: flex !important;
     }
-    
+
     .view-toggle-btn {
         flex: 1 !important;
         justify-content: center !important;
