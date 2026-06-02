@@ -17,7 +17,7 @@ class ServiceController extends Controller
 
         $services = Link::query()
             ->with('kategori')
-            ->where('status', 'aktif')
+            ->whereIn('status', ['aktif', 'bermasalah'])
             ->when($search !== '', function ($items) use ($search) {
                 $items->where(function ($query) use ($search) {
                     $keyword = '%' . $search . '%';

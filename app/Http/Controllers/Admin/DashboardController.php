@@ -29,7 +29,7 @@ class DashboardController extends Controller
             ],
             [
                 'label' => 'Jumlah Layanan',
-                'value' => $this->formatAdminStat($procResults->total_links ?? 0),
+                'value' => $this->formatAdminStat(Link::whereIn('status', ['aktif', 'bermasalah'])->count()),
                 'icon' => 'link',
             ],
             [
@@ -41,20 +41,20 @@ class DashboardController extends Controller
 
         // Statistik Tambahan Lengkap
         $totalPengguna = Pengguna::count();
-        $totalLayanan = $procResults->total_links ?? 0;
+        $totalLayanan = Link::whereIn('status', ['aktif', 'bermasalah'])->count();
         $totalKategori = Kategori::count();
 
-        // 1. Publik vs Pribadi
-        $layananPublik = Link::whereNull('nik')->count();
-        $layananPribadi = Link::whereNotNull('nik')->count();
+        // 1. Publik vs Pribadi (Aktif & Bermasalah)
+        $layananPublik = Link::whereIn('status', ['aktif', 'bermasalah'])->whereNull('nik')->count();
+        $layananPribadi = Link::whereIn('status', ['aktif', 'bermasalah'])->whereNotNull('nik')->count();
 
-        // 2. Health Status Check
-        $layananAman = $procResults->active_links ?? 0;
-        $layananDowntime = Link::whereNotNull('status_http_code')->where('status_http_code', '!=', 200)->count();
-        $layananBelumDicek = Link::whereNull('status_http_code')->count();
+        // 2. Health Status Check (Aktif & Bermasalah)
+        $layananAman = Link::whereIn('status', ['aktif', 'bermasalah'])->where('status_link', 'aktif')->count();
+        $layananDowntime = Link::whereIn('status', ['aktif', 'bermasalah'])->where('status_link', 'bermasalah')->count();
+        $layananBelumDicek = Link::whereIn('status', ['aktif', 'bermasalah'])->where('status_link', 'belum dicek')->count();
 
-        // 3. Waktu Respon Rata-rata dari Stored Procedure
-        $avgResponseTime = $procResults->avg_response_time ?? 0;
+        // 3. Waktu Respon Rata-rata (Aktif & Bermasalah, dan memiliki data waktu respon)
+        $avgResponseTime = (int) Link::whereIn('status', ['aktif', 'bermasalah'])->whereNotNull('status_response_time_ms')->avg('status_response_time_ms');
 
         // 4. Layanan Terpopuler (Top Clicked Links)
         $topLinks = Link::orderBy('hit_point', 'desc')->take(5)->get();

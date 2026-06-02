@@ -37,7 +37,7 @@ class DashboardController extends Controller
 
         $services = Link::query()
             ->with('kategori')
-            ->where('status', 'aktif')
+            ->whereIn('status', ['aktif', 'bermasalah'])
             ->where(function ($q) use ($userNik) {
                 $q->whereNull('nik')->orWhere('nik', $userNik);
             })
