@@ -36,7 +36,9 @@ class LoginController extends Controller
         $password = $request->password;
 
         // ── 1. Coba login sebagai Admin (t_admin) ──────────────────────────
-        $admin = Admin::where('nik_admin', $nip)->first();
+        $admin = Admin::where('nik_admin', $nip)
+            ->orWhere('username', $nip)
+            ->first();
 
         if ($admin && (Hash::check($password, $admin->password) || $admin->password === $password)) {
             Auth::guard('admin')->login($admin, $request->boolean('remember'));
@@ -47,6 +49,7 @@ class LoginController extends Controller
 
         // ── 2. Coba login sebagai Pengguna (t_pengguna) ────────────────────
         $pengguna = Pengguna::where('nik', $nip)
+            ->orWhere('username', $nip)
             ->orWhere('email', $nip)
             ->first();
 
@@ -102,6 +105,7 @@ class LoginController extends Controller
 
         // Cek Admin (t_admin)
         $admin = Admin::where('nik_admin', $identity)
+            ->orWhere('username', $identity)
             ->orWhere('email', $identity)
             ->first();
 
@@ -121,6 +125,7 @@ class LoginController extends Controller
 
         // Cek Pengguna (t_pengguna)
         $pengguna = Pengguna::where('nik', $identity)
+            ->orWhere('username', $identity)
             ->orWhere('email', $identity)
             ->first();
 

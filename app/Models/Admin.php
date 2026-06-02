@@ -12,6 +12,7 @@ class Admin extends Authenticatable
 
     protected $fillable = [
         'nik_admin',
+        'username',
         'nama',
         'email',
         'password',

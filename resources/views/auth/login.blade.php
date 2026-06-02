@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Login - {{ config('app.name', 'POLTREE') }}</title>
-    <meta name="description" content="Masuk ke sistem POLTREE dengan NIP dan kata sandi Anda.">
+    <meta name="description" content="Masuk ke sistem POLTREE dengan NIK / Username dan kata sandi Anda.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,7 +46,7 @@
                     </h1>
 
                     <p class="mt-4 max-w-md text-lg leading-8 text-slate-700 sm:text-xl">
-                        Masukkan NIK dan Password untuk melanjutkan ke sistem.
+                        Masukkan NIK / Username dan Password untuk melanjutkan ke sistem.
                     </p>
                 </section>
 
@@ -79,7 +79,7 @@
                         @csrf
 
                         <div class="space-y-1.5">
-                            <label for="username" class="sr-only">NIP / Username</label>
+                            <label for="username" class="sr-only">NIK / Username</label>
                             <div class="group relative">
                                 <span
                                     class="pointer-events-none absolute inset-y-0 left-4 flex items-center text-orange-500">
@@ -90,7 +90,7 @@
                                     </svg>
                                 </span>
                                 <input id="username" type="text" name="username" autocomplete="username"
-                                    value="{{ old('username') }}" placeholder="Username" required autofocus
+                                    value="{{ old('username') }}" placeholder="NIK / Username" required autofocus
                                     class="h-12 w-full rounded-2xl border border-white/80 bg-white/85 pl-12 pr-4 text-sm font-medium text-slate-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] transition duration-200 placeholder:text-slate-400 focus:border-[#091057] focus:bg-white focus:ring-4 focus:ring-[#091057]/10">
                             </div>
                         </div>
