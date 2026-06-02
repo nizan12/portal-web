@@ -711,6 +711,7 @@ a {
     overflow: hidden;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     flex-grow: 1;
 }
 
@@ -1562,6 +1563,7 @@ select.category-builder-link-input {
     line-height: 1.3;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -2731,9 +2733,11 @@ select.category-builder-link-input {
 .premium-select-options::-webkit-scrollbar {
     width: 5px;
 }
+
 .premium-select-options::-webkit-scrollbar-track {
     background: transparent;
 }
+
 .premium-select-options::-webkit-scrollbar-thumb {
     background: #c3cbda;
     border-radius: 10px;
