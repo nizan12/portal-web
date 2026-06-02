@@ -89,4 +89,6 @@ Route::middleware('auth:admin')->group(function () {
     Route::delete('/admin/tags/{id}', [AdminTagController::class, 'deleteTag'])->name('admin.tags.destroy');
     Route::put('/admin/password', [AdminDashboardController::class, 'updateAdminPassword'])->name('admin.password.update');
     Route::post('/admin/profile', [AdminDashboardController::class, 'updateProfile'])->name('admin.profile.update');
+    Route::get('/admin/api-checker', [AdminDashboardController::class, 'apiChecker'])->name('admin.api-checker');
+    Route::post('/admin/api-checker', [AdminDashboardController::class, 'runApiChecker'])->name('admin.api-checker.run');
 });

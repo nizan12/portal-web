@@ -87,6 +87,7 @@ class ServiceController extends Controller
             ['label' => 'Kelola Layanan', 'href' => route('admin.links'), 'icon' => 'chain', 'active' => $active === 'links'],
             ['label' => 'Kelola Kategori', 'href' => route('admin.categories'), 'icon' => 'folder', 'active' => $active === 'categories'],
             ['label' => 'Kelola Tag', 'href' => route('admin.tags'), 'icon' => 'tag', 'active' => $active === 'tags'],
+            ['label' => 'Uji Test API', 'href' => route('admin.api-checker'), 'icon' => 'pulse', 'active' => $active === 'api-checker'],
         ];
     }
 }

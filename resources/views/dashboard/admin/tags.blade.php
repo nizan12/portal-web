@@ -48,7 +48,7 @@
     </div>
 
     @if ($tags->isNotEmpty())
-        <div class="view-wrapper">
+        <div class="view-wrapper view-mode-table">
             <div class="view-table-container">
                 {{-- Tabel data tag --}}
                 <div class="table-card mt-8 mb-6">
@@ -57,7 +57,6 @@
                             <tr>
                                 <th class="w-16 pl-8">No</th>
                                 <th>Nama Tag</th>
-                                <th>Deskripsi</th>
                                 <th class="w-36 text-center">Jumlah Layanan</th>
                                 <th>Layanan Terkait</th>
                                 <th class="w-36 text-center pr-8">Aksi</th>
@@ -69,12 +68,6 @@
                                     <td class="pl-8">{{ $index + 1 }}</td>
                                     <td>
                                         <span class="font-bold text-[#080d5f]">{{ $tag->nama_tag }}</span>
-                                    </td>
-                                    <td>
-                                        <div class="text-sm text-gray-500 max-w-sm truncate" title="Tag &quot;{{ $tag->nama_tag }}&quot; digunakan untuk memberikan label khusus pada layanan agar lebih mudah ditemukan dan diidentifikasi oleh pengguna di dashboard utama.">
-                                            Tag "{{ $tag->nama_tag }}" digunakan untuk memberikan label khusus pada layanan agar lebih mudah ditemukan dan diidentifikasi oleh pengguna di dashboard utama.
-                                        </div>
-                                    </td>
                                     <td class="text-center">
                                         <span class="category-badge bg-orange-50 text-orange-700 border border-orange-100/50">{{ $tag->links_count }} Layanan</span>
                                     </td>
@@ -152,9 +145,6 @@
                             </div>
 
                             <h2 class="category-name">{{ $tag->nama_tag }}</h2>
-                            <p class="category-desc">
-                                Tag "{{ $tag->nama_tag }}" digunakan untuk memberikan label khusus pada layanan agar lebih mudah ditemukan dan diidentifikasi oleh pengguna di dashboard utama.
-                            </p>
 
                             <div class="service-badge bg-orange-100 text-orange-700">
                                 {{ $tag->links_count }} Layanan

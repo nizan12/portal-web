@@ -17,7 +17,7 @@
         </div>
         <div class="flex gap-3 items-center">
             <div class="view-toggle-wrap">
-                <button type="button" class="view-toggle-btn" data-view-mode="table" title="Tampilan Tabel">
+                <button type="button" class="view-toggle-btn active" data-view-mode="table" title="Tampilan Tabel">
                     <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18"></path></svg>
                     <span>Tabel</span>
                 </button>
@@ -58,13 +58,14 @@
     </div>
 
     @if ($links->isNotEmpty())
-        <div class="view-wrapper">
+        <div class="view-wrapper view-mode-table">
             <div class="view-table-container">
                 <div class="table-card mt-8 mb-6">
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th class="pl-8">Layanan</th>
+                                <th class="w-16 pl-8">No</th>
+                                <th>Layanan</th>
                                 <th>Status</th>
                                 <th>Status Link</th>
                                 <th>Kategori</th>
@@ -74,9 +75,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($links as $link)
+                            @foreach ($links as $index => $link)
                                 <tr>
-                                    <td class="pl-8">
+                                    <td class="pl-8">{{ $links->firstItem() + $index }}</td>
+                                    <td>
                                         <div class="flex flex-col">
                                             <span class="font-bold text-[14px] text-[#080d5f] mb-1">{{ $link->nama_web }}</span>
                                             <a href="{{ $link->normalized_url }}" target="_blank" class="text-[10px] text-blue-400 flex items-center gap-1 group">

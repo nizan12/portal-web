@@ -64,7 +64,7 @@
     </div>
 
     @if ($categories->isNotEmpty())
-        <div class="view-wrapper">
+        <div class="view-wrapper view-mode-table">
             <div class="view-table-container">
                 {{-- Tabel data kategori --}}
                 <div class="table-card mt-8 mb-6">
@@ -73,7 +73,6 @@
                             <tr>
                                 <th class="w-16 pl-8">No</th>
                                 <th>Nama Kategori</th>
-                                <th>Deskripsi</th>
                                 <th class="w-36 text-center">Jumlah Layanan</th>
                                 <th>Layanan Terkait</th>
                                 <th class="w-36 text-center pr-8">Aksi</th>
@@ -96,12 +95,6 @@
                                             </div>
                                             <span class="font-bold text-[#080d5f]">{{ $cat->nama_kategori }}</span>
                                         </div>
-                                    </td>
-                                    <td>
-                                        <div class="text-sm text-gray-500 max-w-sm truncate" title="Kategori {{ $cat->nama_kategori }} menyediakan berbagai layanan yang mendukung proses operasional dan layanan digital di lingkungan Politeknik Negeri Batam.">
-                                            Kategori {{ $cat->nama_kategori }} menyediakan berbagai layanan yang mendukung proses operasional dan layanan digital di lingkungan Politeknik Negeri Batam.
-                                        </div>
-                                    </td>
                                     <td class="text-center">
                                         <span class="category-badge">{{ $cat->links_count }} Layanan</span>
                                     </td>
@@ -182,9 +175,6 @@
                             </div>
 
                             <h2 class="category-name">{{ $cat->nama_kategori }}</h2>
-                            <p class="category-desc">
-                                Kategori {{ $cat->nama_kategori }} menyediakan berbagai layanan yang mendukung proses operasional dan layanan digital di lingkungan Politeknik Negeri Batam.
-                            </p>
 
                             <div class="service-badge">
                                 {{ $cat->links_count }} Layanan

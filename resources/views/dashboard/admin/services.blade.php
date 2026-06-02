@@ -46,7 +46,7 @@
         </label>
     </form>
 
-    <div class="view-wrapper">
+    <div class="view-wrapper view-mode-table">
         <div class="view-table-container">
             {{-- Table View --}}
             <div class="table-card mt-8">

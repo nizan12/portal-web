@@ -135,6 +135,38 @@ class DashboardController extends Controller
         return back()->with('success', 'Profil berhasil diperbarui.');
     }
 
+    public function apiChecker()
+    {
+        $admin = auth('admin')->user();
+        $menuItems = $this->adminMenuItems('api-checker');
+        $pageTitle = 'Uji Test API - ' . config('app.name', 'POLTREE');
+        $topbarTitle = 'Uji Test API';
+
+        return view('dashboard.admin.api-checker', compact('admin', 'menuItems', 'pageTitle', 'topbarTitle'));
+    }
+
+    public function runApiChecker(Request $request, \App\Services\LinkStatusChecker $checker)
+    {
+        $url = trim((string) $request->input('url'));
+        if (!$url) {
+            return response()->json([
+                'success' => false,
+                'message' => 'URL wajib diisi.'
+            ], 400);
+        }
+
+        if (!preg_match('/^(https?:\/\/)/i', $url)) {
+            $url = 'https://' . $url;
+        }
+
+        $result = $checker->checkUrl($url);
+
+        return response()->json([
+            'success' => true,
+            'data' => $result
+        ]);
+    }
+
     private function formatAdminStat(int $value): string
     {
         return str_pad((string) $value, 2, '0', STR_PAD_LEFT);
@@ -149,6 +181,7 @@ class DashboardController extends Controller
             ['label' => 'Kelola Layanan', 'href' => route('admin.links'), 'icon' => 'chain', 'active' => $active === 'links'],
             ['label' => 'Kelola Kategori', 'href' => route('admin.categories'), 'icon' => 'folder', 'active' => $active === 'categories'],
             ['label' => 'Kelola Tag', 'href' => route('admin.tags'), 'icon' => 'tag', 'active' => $active === 'tags'],
+            ['label' => 'Uji Test API', 'href' => route('admin.api-checker'), 'icon' => 'pulse', 'active' => $active === 'api-checker'],
         ];
     }
 }

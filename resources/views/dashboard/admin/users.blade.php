@@ -56,13 +56,14 @@
     </div>
 
     @if ($users->isNotEmpty())
-        <div class="view-wrapper">
+        <div class="view-wrapper view-mode-table">
             <div class="view-table-container">
                 {{-- Tabel data pengguna --}}
                 <div class="table-card mb-6 mt-10">
                     <table class="admin-table">
                         <thead>
                             <tr>
+                                <th class="w-16 pl-8">No</th>
                                 <th class="w-[150px] text-center">NIK</th>
                                 <th>Nama Lengkap</th>
                                 <th>Alamat Email</th>
@@ -71,8 +72,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($users as $user)
+                            @foreach ($users as $index => $user)
                                 <tr>
+                                    <td class="pl-8 text-[13px] text-gray-500 font-semibold">{{ $users->firstItem() + $index }}</td>
                                     <td class="text-center font-mono text-[13px] text-gray-600">{{ $user->nik }}</td>
                                     <td class="pl-6">
                                         <div class="flex items-center gap-3">

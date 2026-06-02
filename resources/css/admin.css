@@ -4423,6 +4423,7 @@ select.category-builder-link-input {
     justify-content: space-between;
     position: relative;
     transition: all 0.3s ease;
+    animation: premiumFadeIn 0.5s var(--ease-premium) both;
 }
 
 .user-card:hover {
@@ -4530,6 +4531,7 @@ select.category-builder-link-input {
     flex-direction: column;
     justify-content: space-between;
     transition: all 0.3s ease;
+    animation: premiumFadeIn 0.5s var(--ease-premium) both;
 }
 
 .link-card:hover {
@@ -5002,4 +5004,99 @@ select.category-builder-link-input {
         width: 100% !important;
         justify-content: center !important;
     }
+}
+
+/* ==========================================================================
+   UNIFIED AND STANDARDIZED TYPOGRAPHY (TABLES & CARDS)
+   ========================================================================== */
+
+/* ── 1. Table Typography ────────────────────────────────────────────────── */
+
+/* Table Header (th) */
+.admin-table th {
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+}
+
+/* Table Body Cell (td) default */
+.admin-table td {
+    font-size: 13px !important;
+}
+
+/* Primary text inside table cell (e.g. Nama Web, Nama User, Nama Kategori) */
+.admin-table td .font-bold,
+.admin-table td span.font-bold,
+.admin-table td td.pl-8,
+.admin-table td span[class*="text-[#080d5f]"],
+.admin-table td a span,
+.admin-table td .font-bold.text-[#080d5f] {
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+}
+
+/* Secondary/Subtext inside table cell (e.g. URLs, email, NIK, last checked) */
+.admin-table td a,
+.admin-table td a.text-blue-400,
+.admin-table td .text-gray-500,
+.admin-table td .text-gray-600,
+.admin-table td .text-gray-400,
+.admin-table td.text-gray-500,
+.admin-table td.font-mono,
+.admin-table td span.text-gray-300,
+.admin-table td span.text-gray-400,
+.admin-table td span.opacity-60 {
+    font-size: 12px !important;
+}
+
+/* Badges / tag listings inside table cell (e.g. status-badge, role-badge, badge-tag) */
+.admin-table td .status-badge,
+.admin-table td .role-badge,
+.admin-table td .badge-tag,
+.admin-table td .category-badge,
+.admin-table td .tag-badge {
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.02em !important;
+}
+
+
+/* ── 2. Card Typography ─────────────────────────────────────────────────── */
+
+/* Primary Card Titles (Nama Layanan, Nama Pengguna, Kategori Name, Tag Name) */
+.link-card-title,
+.user-card-name,
+.category-name,
+.tag-card .category-name,
+.service-card-title {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+}
+
+/* Card Subtitles/secondary text (URLs, NIK) */
+.link-card-url,
+.user-card-nik {
+    font-size: 11.5px !important;
+}
+
+/* Card Descriptions and Body Info Items */
+.link-card-desc,
+.user-card-info-item,
+.user-card-info-item span,
+.category-desc,
+.tag-card-desc,
+.service-card-desc {
+    font-size: 12.5px !important;
+}
+
+/* Card Badges (category-badge, tag-badge, role-badge, status text) */
+.link-card .category-badge,
+.link-card .tag-badge,
+.link-card-status .status-text,
+.user-card .role-badge,
+.category-card .category-badge,
+.category-card .badge-tag {
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
 }

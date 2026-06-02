@@ -44,6 +44,7 @@
             'folder' => '<path d="M4 4h6v6H4V4Zm10 0h6v6h-6V4ZM4 14h6v6H4v-6Zm10 0h6v6h-6v-6Z" fill="currentColor" />',
             'profile' => '<path d="M12 11.6a3.8 3.8 0 1 0 0-7.6 3.8 3.8 0 0 0 0 7.6Zm0 1.9c-4.1 0-7.4 2-7.4 4.5V20h14.8v-2c0-2.5-3.3-4.5-7.4-4.5Z" fill="currentColor" />',
             'tag' => '<path d="M3.3 3.3v7.1L13 20.1l7.1-7.1L10.4 3.3H3.3Zm4.2 2.1a2.1 2.1 0 1 1 0 4.2 2.1 2.1 0 0 1 0-4.2Z" fill="currentColor" />',
+            'pulse' => '<path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-2.5l-2-4-3 7-2-3H7v-2h2.5l2 4 3-7 2 3H17v2z" fill="currentColor" />',
             'default' => '<circle cx="12" cy="12" r="8" fill="currentColor" />',
         ];
 
