@@ -8,7 +8,6 @@ return new class extends Migration
 {
     /**
      * Tambah kolom username ke t_admin dan t_pengguna
-     * agar user bisa login pakai NIK atau username.
      */
     public function up(): void
     {
