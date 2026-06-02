@@ -70,15 +70,6 @@
                         </div>
                     @endif
 
-                    @if (session('reset_token'))
-                        <div class="mb-5 p-4 rounded-2xl border border-blue-100 bg-blue-50/90 text-sm text-slate-700">
-                            <span class="font-bold text-[#091057] block mb-1">Development Mode:</span>
-                            Tautan simulasi reset password siap digunakan:
-                            <a href="{{ route('password.reset', session('reset_token')) }}" class="mt-2 inline-flex items-center justify-center h-10 w-full rounded-xl bg-orange-500 text-white font-semibold text-xs uppercase tracking-wider transition hover:bg-orange-600 shadow-md">
-                                Reset Password Sekarang &rarr;
-                            </a>
-                        </div>
-                    @endif
 
                     <form method="POST" action="{{ route('password.email') }}" class="space-y-3" novalidate>
                         @csrf

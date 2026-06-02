@@ -91,7 +91,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Kirim tautan reset password (Simulasi Interaktif).
+     * Kirim tautan reset password via email.
      */
     public function handleForgotPassword(Request $request)
     {
@@ -102,47 +102,63 @@ class LoginController extends Controller
         ]);
 
         $identity = $request->identity;
+        $token    = \Illuminate\Support\Str::random(60);
 
-        // Cek Admin (t_admin)
+        // ── 1. Cek Admin (t_admin) ─────────────────────────────────────────
         $admin = Admin::where('nik_admin', $identity)
             ->orWhere('username', $identity)
             ->orWhere('email', $identity)
             ->first();
 
         if ($admin) {
-            $token = \Illuminate\Support\Str::random(60);
+            if (empty($admin->email)) {
+                return back()->withErrors([
+                    'identity' => 'Akun ini belum memiliki alamat email. Hubungi administrator.'
+                ]);
+            }
+
             session([
                 'reset_token' => $token,
-                'reset_nik' => $admin->nik_admin,
-                'reset_role' => 'admin'
+                'reset_nik'   => $admin->nik_admin,
+                'reset_role'  => 'admin'
             ]);
 
-            return back()->with([
-                'status' => 'Data Admin terverifikasi! Tautan reset password aman telah disiapkan.',
-                'reset_token' => $token
-            ]);
+            $resetUrl = route('password.reset', $token);
+
+            \Illuminate\Support\Facades\Mail::to($admin->email)
+                ->send(new \App\Mail\ResetPasswordMail($resetUrl, $admin->nama));
+
+            return back()->with('status', 'Tautan reset password telah dikirim ke email Anda.');
         }
 
-        // Cek Pengguna (t_pengguna)
+        // ── 2. Cek Pengguna (t_pengguna) ───────────────────────────────────
         $pengguna = Pengguna::where('nik', $identity)
             ->orWhere('username', $identity)
             ->orWhere('email', $identity)
             ->first();
 
         if ($pengguna) {
-            $token = \Illuminate\Support\Str::random(60);
+            if (empty($pengguna->email)) {
+                return back()->withErrors([
+                    'identity' => 'Akun ini belum memiliki alamat email. Hubungi administrator.'
+                ]);
+            }
+
             session([
                 'reset_token' => $token,
-                'reset_nik' => $pengguna->nik,
-                'reset_role' => 'pengguna'
+                'reset_nik'   => $pengguna->nik,
+                'reset_role'  => 'pengguna'
             ]);
 
-            return back()->with([
-                'status' => 'Data Pengguna terverifikasi! Tautan reset password aman telah disiapkan.',
-                'reset_token' => $token
-            ]);
+            $resetUrl = route('password.reset', $token);
+
+            \Illuminate\Support\Facades\Mail::to($pengguna->email)
+                ->send(new \App\Mail\ResetPasswordMail($resetUrl, $pengguna->nama_user));
+
+            return back()->with('status', 'Tautan reset password telah dikirim ke email Anda.');
         }
 
+        // ── 3. Tidak ditemukan ─────────────────────────────────────────────
         return back()->withErrors([
             'identity' => 'NIK atau Email tidak terdaftar dalam sistem.'
         ]);
