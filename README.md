@@ -136,7 +136,7 @@ Setelah melakukan `--seed`, Anda dapat menggunakan akun bawaan berikut untuk men
 
 ---
 
-## 🔌 Integrasi API & Health Check
+## Integrasi API & Health Check
 
 POLTREE memiliki modul pemantauan keaktifan website (*service uptime monitor*) yang terintegrasi secara otomatis menggunakan API eksternal **Downtime Check**:
 
@@ -160,7 +160,7 @@ POLTREE memiliki modul pemantauan keaktifan website (*service uptime monitor*) y
 
 ---
 
-## 🗄️ Fitur Basis Data Lanjutan
+## Fitur Basis Data Lanjutan
 
 Untuk menjamin integritas data yang kokoh dan efisiensi pemrosesan data, sistem database POLTREE telah ditingkatkan dengan fitur basis data lanjutan sebagai berikut:
 
