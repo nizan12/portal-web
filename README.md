@@ -16,7 +16,7 @@
 
 ---
 
-## 🌟 Fitur Utama Sistem
+## Fitur Utama Sistem
 
 ### 1. Sistem Autentikasi Modern & Dinamis (GSAP)
 * **GSAP Fluid Transitions:** Halaman Login, Lupa Password, dan Atur Ulang Kata Sandi dilengkapi animasi masuk yang sangat halus dan premium menggunakan GreenSock Animation Platform (GSAP).
@@ -44,7 +44,7 @@
 
 ---
 
-## 🛠️ Spesifikasi Teknologi
+## Spesifikasi Teknologi
 
 * **Backend Framework:** Laravel (PHP 8.x)
 * **Asset Bundler:** Vite
@@ -54,7 +54,7 @@
 
 ---
 
-## 🚀 Panduan Instalasi & Penggunaan
+## Panduan Instalasi & Penggunaan
 
 Ikuti langkah-langkah di bawah untuk menjalankan proyek **POLTREE** di server lokal Anda:
 
@@ -122,7 +122,7 @@ Akses aplikasi melalui peramban web Anda di alamat: `http://127.0.0.1:8000`
 
 ---
 
-## 🔑 Kredensial Akun Default (Hasil Seeds)
+## Kredensial Akun Default (Hasil Seeds)
 
 Setelah melakukan `--seed`, Anda dapat menggunakan akun bawaan berikut untuk menguji sistem:
 
@@ -258,7 +258,7 @@ Untuk menjamin integritas data yang kokoh dan efisiensi pemrosesan data, sistem 
 
 ---
 
-## 📁 Struktur Direktori Penting
+## Struktur Direktori Penting
 
 * `app/Http/Controllers/` - Mengontrol logika autentikasi, dashboard, dan operasi CRUD.
 * `resources/views/` - File Blade untuk User Interface (Layouts, Auth, Admin, Pengguna).
@@ -267,4 +267,4 @@ Untuk menjamin integritas data yang kokoh dan efisiensi pemrosesan data, sistem 
 * `routes/web.php` - Registrasi endpoint rute sistem.
 
 ---
-*Dikembangkan dengan penuh dedikasi untuk menciptakan User Experience (UX) terbaik di lingkungan sistem portal kampus.*
+*Dikembangkan dengan penuh dedikasi dan cinta❤️*
