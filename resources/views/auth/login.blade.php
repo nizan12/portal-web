@@ -46,7 +46,7 @@
                     </h1>
 
                     <p class="mt-4 max-w-md text-lg leading-8 text-slate-700 sm:text-xl">
-                        Masukkan NIK / Username dan Password untuk melanjutkan ke sistem.
+                        Portal akses semua web Politeknik Negeri Batam.
                     </p>
                 </section>
 
