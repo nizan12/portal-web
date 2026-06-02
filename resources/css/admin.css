@@ -5033,8 +5033,7 @@ select.category-builder-link-input {
 .admin-table td span.font-bold,
 .admin-table td td.pl-8,
 .admin-table td span[class*="text-[#080d5f]"],
-.admin-table td a span,
-.admin-table td .font-bold.text-[#080d5f] {
+.admin-table td a span {
     font-size: 13.5px !important;
     font-weight: 700 !important;
 }
